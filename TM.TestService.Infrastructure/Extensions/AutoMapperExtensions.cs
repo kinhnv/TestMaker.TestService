@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using TM.TestService.Domain.Models.Question;
+using TM.TestService.Domain.Models.Question.QuestionTypes;
 using TM.TestService.Domain.Models.Section;
 using TM.TestService.Domain.Models.Test;
 using TM.TestService.Infrastructure.Entities;
@@ -33,6 +34,11 @@ namespace TM.TestService.Infrastructure.Extensions
             CreateMap<QuestionForEditing, Question>();
             CreateMap<Question, QuestionForList>();
             CreateMap<Question, QuestionForDetails>();
+
+            CreateMap<Question, MultipleChoiceQuestion>();
+            CreateMap<Question, BlankFillingQuestion>();
+            CreateMap<Question, SortingQuestion>();
+            CreateMap<Question, MatchingQuestion>();
         }
     }
 }

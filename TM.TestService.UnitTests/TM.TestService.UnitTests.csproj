@@ -31,4 +31,8 @@
 		<ProjectReference Include="..\TM.TestService.Infrastructure\TM.TestService.Infrastructure.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Services\" />
+	</ItemGroup>
+
 </Project>

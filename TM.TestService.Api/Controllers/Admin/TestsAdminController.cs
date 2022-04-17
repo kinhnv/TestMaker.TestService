@@ -7,13 +7,13 @@ using TM.TestService.Domain.Services;
 
 namespace TM.TestService.Api.Admin.Controllers.Admin
 {
-    [Route("api/Admin/[controller]")]
+    [Route("api/Admin/Tests")]
     [ApiController]
-    public class TestsController : ControllerBase
+    public class TestsAdminController : ControllerBase
     {
         private readonly ITestsService _testsService;
 
-        public TestsController(ITestsService testsService)
+        public TestsAdminController(ITestsService testsService)
         {
             _testsService = testsService;
         }

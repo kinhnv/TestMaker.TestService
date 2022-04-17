@@ -9,13 +9,13 @@ using TM.TestService.Domain.Services;
 
 namespace TM.TestService.Api.Admin.Controllers.Admin
 {
-    [Route("api/Admin/[controller]")]
+    [Route("api/Admin/Sections")]
     [ApiController]
-    public class SectionsController : ControllerBase
+    public class SectionsAdminController : ControllerBase
     {
         private readonly ISectionsService _sectionsService;
 
-        public SectionsController(ISectionsService sectionsService)
+        public SectionsAdminController(ISectionsService sectionsService)
         {
             _sectionsService = sectionsService;
         }
