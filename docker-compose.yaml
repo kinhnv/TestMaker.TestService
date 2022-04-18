@@ -1,0 +1,16 @@
+version: '3.7'
+services:
+  test-admin:
+    image: kinhnv1801/tm.test-service:${VERSION}
+    build:
+      context: .
+      dockerfile: ./TM.TestService.Api/Dockerfile
+    ports:
+      - "40000:80" 
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+    networks:
+      - tm-network
+  
+networks:
+  tm-network:

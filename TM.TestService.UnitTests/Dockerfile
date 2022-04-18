@@ -6,5 +6,5 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY . .
-RUN dotnet restore "Business/TestMaker.Business.Admin.UnitTests/TestMaker.Business.Admin.UnitTests.csproj"
-WORKDIR "/src/Business/TestMaker.Business.Admin.UnitTests"
+RUN dotnet restore "TM.TestService.UnitTests/TM.TestService.UnitTests.csproj"
+WORKDIR "/src/TM.TestService.UnitTests"
