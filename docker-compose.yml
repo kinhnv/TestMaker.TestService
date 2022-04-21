@@ -11,6 +11,14 @@ services:
       - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     networks:
       - tm-network
-  
+  ngrok:
+    image: ngrok/ngrok:alpine
+    volumes:
+      - ./ngrok.yml:/etc/ngrok.yml
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+      - NGROK_CONFIG=/etc/ngrok.yml
+    networks:
+      - tm-network
 networks:
   tm-network:
