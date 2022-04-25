@@ -26,4 +26,4 @@ deploy-test-service:
     stage: deploy
     needs: [test-test-business]
     script:
-        - docker stack deploy --compose-file docker-compose.yml test-service
+        - ls
