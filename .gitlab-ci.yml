@@ -7,13 +7,6 @@ stages:
   - test
   - deploy
 
-before_script:
-  - eval "$(ssh-agent -s)"
-  - cat /home/kinhn/.ssh/id_rsa | ssh-add - > /dev/null
-  - ssh-add ~/.ssh/id_rsa_github
-  - echo $ROOT_PASSWORD | sudo -S rm -rf ~/.ssh/id_rsa_github
-  - ssh-keyscan $GITLAB_URL >> ~/.ssh/known_hosts
-
 build-test-service:
   stage: build
   script:
