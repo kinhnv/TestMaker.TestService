@@ -1,12 +1,11 @@
 variables:
     VERSION: "$CI_PIPELINE_ID"
     ASPNETCORE_ENVIRONMENT: "Production"
-    ROOT: "$(pwd)"
 
 stages:
-  - build
-  - test
-  - deploy
+    - build
+    - test
+    - deploy
 
 build-test-service:
     stage: build
@@ -28,7 +27,7 @@ deploy-test-service:
     needs: [test-test-business]
     script:
         - git config --global --add safe.directory $(pwd)
-        - echo $ROOT_PASSWORD | sudo -S git remote add github $(pwd)
+        - echo $ROOT_PASSWORD | sudo -S git remote add github git@github.com:kinhnv/TM.TestService.git
         - git push orgin master
-        - echo $ROOT_PASSWORD | sudo -S git remote remove github $(pwd)
+        - echo $ROOT_PASSWORD | sudo -S git remote remove github git@github.com:kinhnv/TM.TestService.git
         - git config --global --unset safe.directory $(pwd)
