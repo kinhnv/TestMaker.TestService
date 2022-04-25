@@ -27,7 +27,6 @@ deploy-test-service:
   needs: [test-test-business]
   script:
     - git config --global --add safe.directory $(pwd)
-    - echo $ROOT_PASSWORD | sudo -S git remote remove github
     - echo $ROOT_PASSWORD | sudo -S git remote add github git@github.com:kinhnv/TM.TestService.git
     - git push origin origin/master
     - echo $ROOT_PASSWORD | sudo -S git remote remove github
