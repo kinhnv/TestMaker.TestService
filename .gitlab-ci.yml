@@ -9,7 +9,7 @@ stages:
 
 before_script:
   - eval "$(ssh-agent -s)"
-  - echo $ROOT_PASSWORD | sudo -S cat $SSH_PRIVATE_KEY | ssh-add - > /dev/null
+  - cat $SSH_PRIVATE_KEY | ssh-add - > /dev/null
   - ssh-keyscan $GITHUB_URL >> ~/.ssh/known_hosts
 
 build-test-service:
