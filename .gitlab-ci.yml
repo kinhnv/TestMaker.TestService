@@ -28,6 +28,7 @@ deploy-test-service:
     script:
         - eval "$(ssh-agent -s)"
         - ssh-add ~/.ssh/id_rsa
+        - ssh-keyscan $GITLAB_URL >> ~/.ssh/known_hosts
         - git config --global --add safe.directory $(pwd)
         - echo $ROOT_PASSWORD | sudo -S git remote remove github
         - echo $ROOT_PASSWORD | sudo -S git remote add github git@github.com:kinhnv/TM.TestService.git
