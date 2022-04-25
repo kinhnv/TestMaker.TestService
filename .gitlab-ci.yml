@@ -10,7 +10,7 @@ stages:
 before_script:
   - eval "$(ssh-agent -s)"
   - ssh-add /home/kinhn/.ssh/id_rsa
-  - ssh-keyscan $GITLAB_URL >> ~/.ssh/known_hosts
+  - ssh-keyscan $GITHUB_URL >> ~/.ssh/known_hosts
 
 build-test-service:
   stage: build
