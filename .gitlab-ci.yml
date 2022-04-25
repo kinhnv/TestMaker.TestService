@@ -28,5 +28,7 @@ deploy-test-service:
     needs: [test-test-business]
     script:
         - git config --global --add safe.directory $(pwd)
+        - echo $ROOT_PASSWORD | sudo -S git remote add github $(pwd)
         - git push orgin master
+        - echo $ROOT_PASSWORD | sudo -S git remote remove github $(pwd)
         - git config --global --unset safe.directory $(pwd)
