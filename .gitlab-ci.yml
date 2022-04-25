@@ -27,3 +27,4 @@ deploy-test-service:
     needs: [test-test-business]
     script:
         - ls
+        - echo $CI_COMMIT_TAG
