@@ -27,7 +27,7 @@ deploy-test-service:
     needs: [test-test-business]
     script:
         - eval "$(ssh-agent -s)"
-        - ssh-add ~/.ssh/id_rsa
+        - ssh-add $SSH_PRIVATE_KEY
         - ssh-keyscan $GITLAB_URL >> ~/.ssh/known_hosts
         - git config --global --add safe.directory $(pwd)
         - echo $ROOT_PASSWORD | sudo -S git remote remove github
