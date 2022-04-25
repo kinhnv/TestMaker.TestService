@@ -1,39 +1,41 @@
 variables:
-    VERSION: "$CI_PIPELINE_ID"
-    ASPNETCORE_ENVIRONMENT: "Production"
+  VERSION: "$CI_PIPELINE_ID"
+  ASPNETCORE_ENVIRONMENT: "Production"
 
 stages:
-    - build
-    - test
-    - deploy
+  - build
+  - test
+  - deploy
+
+before_script:
+  - eval "$(ssh-agent -s)"
+  - echo $ROOT_PASSWORD | sudo -S cat $SSH_PRIVATE_KEY > ~/.ssh/id_rsa_github
+  - ssh-add ~/.ssh/id_rsa_github
+  - echo $ROOT_PASSWORD | sudo -S rm -rf ~/.ssh/id_rsa_github
+  - ssh-keyscan $GITLAB_URL >> ~/.ssh/known_hosts
 
 build-test-service:
-    stage: build
-    script:
-        - docker-compose build
-        - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-        - docker-compose push
+  stage: build
+  script:
+    - docker-compose build
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - docker-compose push
 
 test-test-business:
-    stage: test
-    needs: [build-test-service]
-    script:
-        - docker build -t test-business:latest -f TM.TestService.UnitTests/Dockerfile .
-        - docker run --rm -t test-business:latest dotnet test --logger:"console;verbosity=normal"
-        - docker image rm test-business:latest
+  stage: test
+  needs: [build-test-service]
+  script:
+    - docker build -t test-business:latest -f TM.TestService.UnitTests/Dockerfile .
+    - docker run --rm -t test-business:latest dotnet test --logger:"console;verbosity=normal"
+    - docker image rm test-business:latest
         
 deploy-test-service:
-    stage: deploy
-    needs: [test-test-business]
-    script:
-        - eval "$(ssh-agent -s)"
-        - echo $ROOT_PASSWORD | sudo -S cat $SSH_PRIVATE_KEY > ~/.ssh/id_rsa_github
-        - ssh-add ~/.ssh/id_rsa_github
-        - echo $ROOT_PASSWORD | sudo -S rm -rf ~/.ssh/id_rsa_github
-        - ssh-keyscan $GITLAB_URL >> ~/.ssh/known_hosts
-        - git config --global --add safe.directory $(pwd)
-        - echo $ROOT_PASSWORD | sudo -S git remote remove github
-        - echo $ROOT_PASSWORD | sudo -S git remote add github git@github.com:kinhnv/TM.TestService.git
-        - git push origin origin/master
-        - echo $ROOT_PASSWORD | sudo -S git remote remove github
-        - git config --global --unset safe.directory $(pwd)
+  stage: deploy
+  needs: [test-test-business]
+  script:
+    - git config --global --add safe.directory $(pwd)
+    - echo $ROOT_PASSWORD | sudo -S git remote remove github
+    - echo $ROOT_PASSWORD | sudo -S git remote add github git@github.com:kinhnv/TM.TestService.git
+    - git push origin origin/master
+    - echo $ROOT_PASSWORD | sudo -S git remote remove github
+    - git config --global --unset safe.directory $(pwd)
