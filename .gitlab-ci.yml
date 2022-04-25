@@ -9,7 +9,7 @@ stages:
 
 before_script:
   - eval "$(ssh-agent -s)"
-  - echo $ROOT_PASSWORD | sudo -S cat $SSH_PRIVATE_KEY > ~/.ssh/id_rsa_github
+  - echo $ROOT_PASSWORD | sudo -S echo $SSH_PRIVATE_KEY > ~/.ssh/id_rsa_github
   - ssh-add ~/.ssh/id_rsa_github
   - echo $ROOT_PASSWORD | sudo -S rm -rf ~/.ssh/id_rsa_github
   - ssh-keyscan $GITLAB_URL >> ~/.ssh/known_hosts
