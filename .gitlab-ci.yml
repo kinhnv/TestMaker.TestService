@@ -7,6 +7,21 @@ stages:
     - test
     - deploy
 
+before_script:
+    - apt-get update -y && apt-get install -yqqf openssh-client git unzip sshpass rsync --fix-missing
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client git -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY_TOOLKIT" | tr -d '\r' | ssh-add - > /dev/null
+
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+
+    - ssh-keyscan $GITHUB_URL >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+
+    - git config --global user.email "our@email.com"
+    - git config --global user.name "Gitlab Runner"
+
 build-test-service:
     stage: build
     script:
@@ -27,8 +42,7 @@ deploy-test-service:
     needs: [test-test-business]
     script:
         - git config --global --add safe.directory $(pwd)
-        - echo $ROOT_PASSWORD | sudo -S git remote remove github
-        - echo $ROOT_PASSWORD | sudo -S git remote add github git@github.com:kinhnv/TM.TestService.git
+        - echo $ROOT_PASSWORD | sudo -S git remote add github $GITHUB_URL
         - git push origin origin/master
         - echo $ROOT_PASSWORD | sudo -S git remote remove github
         - git config --global --unset safe.directory $(pwd)
