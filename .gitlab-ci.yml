@@ -8,8 +8,7 @@ stages:
   - deploy
 
 before_script:
-  - ssh-add /home/kinhn/.ssh/id_rsa_github
-  - echo $ROOT_PASSWORD | sudo -S rm -rf ~/.ssh/id_rsa_github
+  - ssh-add /home/kinhn/.ssh/id_rsa
   - ssh-keyscan $GITLAB_URL >> ~/.ssh/known_hosts
 
 build-test-service:
