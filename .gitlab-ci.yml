@@ -1,6 +1,7 @@
 variables:
     VERSION: "$CI_PIPELINE_ID"
     ASPNETCORE_ENVIRONMENT: "Production"
+    ROOT: "$(pwd)"
 
 stages:
   - build
@@ -10,21 +11,22 @@ stages:
 build-test-service:
     stage: build
     script:
-        - docker-compose build
-        - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-        - docker-compose push
+        - echo $ROOT
+#         - docker-compose build
+#         - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+#         - docker-compose push
 
-test-test-business:
-    stage: test
-    needs: [build-test-service]
-    script:
-        - docker build -t test-business:latest -f TM.TestService.UnitTests/Dockerfile .
-        - docker run --rm -t test-business:latest dotnet test --logger:"console;verbosity=normal"
-        - docker image rm test-business:latest
+# test-test-business:
+#     stage: test
+#     needs: [build-test-service]
+#     script:
+#         - docker build -t test-business:latest -f TM.TestService.UnitTests/Dockerfile .
+#         - docker run --rm -t test-business:latest dotnet test --logger:"console;verbosity=normal"
+#         - docker image rm test-business:latest
         
-deploy-test-service:
-    stage: deploy
-    needs: [test-test-business]
-    script:
-        - ls
-        - echo $CI_COMMIT_TAG
+# deploy-test-service:
+#     stage: deploy
+#     needs: [test-test-business]
+#     script:
+#         - ls
+#         - echo $CI_COMMIT_TAG
