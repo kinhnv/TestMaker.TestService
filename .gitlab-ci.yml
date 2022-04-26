@@ -11,7 +11,7 @@ before_script:
   - eval "$(ssh-agent -s)"
   - cat ~/.ssh/id_rsa | ssh-add - > /dev/null
   - ssh-keyscan github.com >> ~/.ssh/known_hosts
-  - echo $GITHUB_URL
+  - echo ${GITHUB_URL}
 
 # build-test-service:
 #   stage: build
