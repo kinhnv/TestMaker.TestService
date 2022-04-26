@@ -9,24 +9,24 @@ stages:
 
 before_script:
   - eval "$(ssh-agent -s)"
-  - ssh-add <(echo "$SSH_PRIVATE_KEY" | base64 -d)
+  - cat ~/.ssh/id_rsa | ssh-add - > /dev/null
   - ssh-keyscan github.com >> ~/.ssh/known_hosts
   - chmod 644 ~/.ssh/known_hosts
 
-# build-test-service:
-#   stage: build
-#   script:
-#     - docker-compose build
-#     - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-#     - docker-compose push
+build-test-service:
+  stage: build
+  script:
+    - docker-compose build
+    - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+    - docker-compose push
 
-# test-test-business:
-#   stage: test
-#   needs: [build-test-service]
-#   script:
-#     - docker build -t test-business:latest -f TM.TestService.UnitTests/Dockerfile .
-#     - docker run --rm -t test-business:latest dotnet test --logger:"console;verbosity=normal"
-#     - docker image rm test-business:latest
+test-test-business:
+  stage: test
+  needs: [build-test-service]
+  script:
+    - docker build -t test-business:latest -f TM.TestService.UnitTests/Dockerfile .
+    - docker run --rm -t test-business:latest dotnet test --logger:"console;verbosity=normal"
+    - docker image rm test-business:latest
         
 deploy-test-service:
   stage: deploy
