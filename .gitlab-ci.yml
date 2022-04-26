@@ -35,5 +35,6 @@ deploy-test-service:
     - ssh git@github.com || true
     - git remote remove origin && git remote add origin git@github.com:kinhnv/TM.TestService.git
     - git config --global --add safe.directory $(pwd)
-    - git push origin master -f
+    - git fetch --unshallow git@github.com:kinhnv/TM.TestService.git
+    - git push origin HEAD:master -f
     - git config --global --unset safe.directory $(pwd) || true
