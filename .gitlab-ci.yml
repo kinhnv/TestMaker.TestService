@@ -31,7 +31,7 @@ deploy-test-service:
   stage: deploy
   # needs: [test-test-business]
   script:
-    - ssh -tt git@github.com
+    - ssh -T git@github.com
     - git remote rm origin
     - git remote add origin git@github.com:kinhnv/TM.TestService.git
     - git config --global --add safe.directory $(pwd)
