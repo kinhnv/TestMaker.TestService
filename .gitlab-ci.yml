@@ -11,6 +11,7 @@ before_script:
   - eval "$(ssh-agent -s)"
   - cat ~/.ssh/id_rsa | ssh-add - > /dev/null
   - ssh-keyscan github.com >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
 
 # build-test-service:
 #   stage: build
@@ -32,8 +33,7 @@ deploy-test-service:
   # needs: [test-test-business]
   script:
     - ssh -T git@github.com
-    - git remote rm origin
-    - git remote add origin git@github.com:kinhnv/TM.TestService.git
+    - git remote rm origin @ git remote add origin git@github.com:kinhnv/TM.TestService.git
     - git config --global --add safe.directory $(pwd)
     - git push origin origin/master
     - git config --global --unset safe.directory $(pwd)
