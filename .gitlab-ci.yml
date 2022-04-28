@@ -38,9 +38,12 @@ deploy-test-service:
     - git fetch --unshallow $GITHUB_URL
     - git push origin HEAD:master -f
     - git config --global --unset safe.directory $(pwd) || true
+    - rm -rf *
     - git clone $GITOPS_URL && cd git GitOps
+    - git config --global --add safe.directory $(pwd)
     - git branch tm/test-service
     - sed -i 's/tm.test-service:[0-9]*/tm.test-service:$VERSION/g' ./setup/deployment.yaml
-    - git add .
+    - git add ./setup/deployment.yaml
     - git commit -m "change to version $VERSION"
     - git push origin tm/test-service
+    - git config --global --unset safe.directory $(pwd) || true
