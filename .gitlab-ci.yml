@@ -43,6 +43,7 @@ deploy-test-service:
     - cd GitOps
     - git config --global --add safe.directory $(pwd)
     - git branch origin/tm/test-service
+    - git checkout origin/tm/test-service
     - sed -i 's/tm.test-service:[0-9]*/tm.test-service:$VERSION/g' ./setup/deployment.yaml
     - git add ./setup/deployment.yaml
     - git commit -m "change to version $VERSION"
