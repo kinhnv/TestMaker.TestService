@@ -1,6 +1,6 @@
 variables:
   VERSION: "$CI_PIPELINE_ID"
-  ASPNETCORE_ENVIRONMENT: "Production"
+  ASPNETCORE_ENVIRONMENT: "Test"
 
 stages:
   - build
@@ -25,6 +25,8 @@ build:
 
 update-github:
   stage: update_github
+  needs:
+    - build
   only:
     - test
   script:
