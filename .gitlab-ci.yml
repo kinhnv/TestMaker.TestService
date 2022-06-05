@@ -31,7 +31,7 @@ update-github:
     - ssh git@github.com || true
     - git remote remove origin && git remote add origin $GITHUB_URL
     - git config --global --add safe.directory $(pwd)
-    - git fetch --unshallow $GITHUB_URL
+    - git fetch --unshallow $GITHUB_URL || true
     - git push origin HEAD:master -f
     - git config --global --unset safe.directory $(pwd) || true
 
