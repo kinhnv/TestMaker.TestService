@@ -1,7 +1,7 @@
 version: '3.7'
 services:
-  test-admin:
-    image: kinhnv1801/tm.test-service:${VERSION}
+  test-service:
+    image: kinhnv1801/test-maker.test-service:${VERSION}
     build:
       context: .
       dockerfile: ./TestMaker.TestService.Api/Dockerfile  
