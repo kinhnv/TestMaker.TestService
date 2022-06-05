@@ -41,7 +41,7 @@ test:
     - master
   needs: [build]
   script:
-    - docker build -t test-business:latest -f TM.TestService.UnitTests/Dockerfile .
+    - docker build -t test-business:latest -f TestMaker.TestService.UnitTests/Dockerfile .
     - docker run --rm -t test-business:latest dotnet test --logger:"console;verbosity=normal"
     - docker image rm test-business:latest
         
