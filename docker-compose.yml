@@ -4,6 +4,4 @@ services:
     image: kinhnv1801/tm.test-service:${VERSION}
     build:
       context: .
-      dockerfile: ./TM.TestService.Api/Dockerfile  
-networks:
-  tm-network:
+      dockerfile: ./TestMaker.TestService.Api/Dockerfile  
