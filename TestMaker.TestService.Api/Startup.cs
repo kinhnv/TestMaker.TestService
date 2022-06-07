@@ -60,7 +60,7 @@ namespace TestMaker.Api
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseDeveloperExceptionPage();
-            if (env.IsDevelopment() || env.EnvironmentName == "Production")
+            if (env.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TM.TestMaker.Api v1"));
