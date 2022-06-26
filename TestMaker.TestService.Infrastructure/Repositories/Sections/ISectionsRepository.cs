@@ -9,5 +9,6 @@ namespace TestMaker.TestService.Infrastructure.Repositories.Sections
 {
     public interface ISectionsRepository: IRepository<Section>
     {
+        Task<List<Section>> GetSectionsAsync(SectionsFilter filter);
     }
 }

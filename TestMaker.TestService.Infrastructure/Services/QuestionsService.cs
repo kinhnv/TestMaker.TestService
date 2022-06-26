@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TestMaker.TestService.Domain.Models.Quersion;
 using TestMaker.TestService.Domain.Models.Question;
 using TestMaker.TestService.Domain.Services;
 using TestMaker.TestService.Infrastructure.Entities;
@@ -59,9 +60,14 @@ namespace TestMaker.TestService.Infrastructure.Services
             return await Task.FromResult(_mapper.Map<QuestionForDetails>(question));
         }
 
-        public async Task<IEnumerable<QuestionForList>> GetQuestionsAsync()
+        public async Task<IEnumerable<QuestionForList>> GetQuestionsAsync(GetQuestionsRequest request)
         {
-            var result = _dbContext.Questions.ToList().Select(question => _mapper.Map<QuestionForList>(question));
+            var query = _dbContext.Questions.AsQueryable();
+            if (request?.SectionId != null)
+            {
+                query = query.Where(x => x.SectionId == request.SectionId);
+            }
+            var result = query.ToList().Select(question => _mapper.Map<QuestionForList>(question));
             return await Task.FromResult(result);
         }
 

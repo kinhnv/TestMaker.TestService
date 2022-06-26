@@ -21,9 +21,9 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetSections()
+        public async Task<ActionResult> GetSections([FromQuery]GetQuestionsRequest request)
         {
-            return Ok(await _sectionsService.GetSectionsAsync());
+            return Ok(await _sectionsService.GetSectionsAsync(request));
         }
 
         [HttpGet("{id}")]

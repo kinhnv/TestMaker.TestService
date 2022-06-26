@@ -104,18 +104,21 @@ namespace SectionMaker.Business.UnitSections.Services
             // Setup
             ISectionsService sectionsService = CreateSectionsService(() =>
             {
-                _mockSectionsRepository.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<Section> { _section });
+                _mockSectionsRepository.Setup(x => x.GetSectionsAsync(It.IsAny<SectionsFilter>())).ReturnsAsync(new List<Section> { _section });
             });
 
             // Run
-            var sectionForList = await sectionsService.GetSectionsAsync();
+            var sectionForList = await sectionsService.GetSectionsAsync(new GetQuestionsRequest
+            {
+                TestId = null
+            });
 
             // Section
             Assert.Equal(_section.SectionId, sectionForList.First().SectionId);
             Assert.Equal(_section.Name, sectionForList.First().Name);
 
             // Section calling
-            _mockSectionsRepository.Verify(x => x.GetAllAsync(), Times.Once);
+            _mockSectionsRepository.Verify(x => x.GetSectionsAsync(It.IsAny<SectionsFilter>()), Times.Once);
         }
 
         [Fact]
