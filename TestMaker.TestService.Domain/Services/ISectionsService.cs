@@ -9,7 +9,7 @@ namespace TestMaker.TestService.Domain.Services
 {
     public interface ISectionsService
     {
-        Task<IEnumerable<SectionForList>> GetSectionsAsync();
+        Task<IEnumerable<SectionForList>> GetSectionsAsync(GetQuestionsRequest request);
 
         Task<SectionForDetails> GetSectionAsync(Guid testId);
 

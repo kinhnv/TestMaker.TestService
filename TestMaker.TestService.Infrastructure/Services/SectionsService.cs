@@ -52,9 +52,13 @@ namespace TestMaker.TestService.Infrastructure.Services
             return await Task.FromResult(_mapper.Map<SectionForDetails>(section));
         }
 
-        public async Task<IEnumerable<SectionForList>> GetSectionsAsync()
+        public async Task<IEnumerable<SectionForList>> GetSectionsAsync(GetQuestionsRequest request)
         {
-            var sections = (await _sectionsRepository.GetAllAsync()).Select(section => _mapper.Map<SectionForList>(section));
+            var filter = new SectionsFilter
+            {
+                TestId = request?.TestId ?? null,
+            };
+            var sections = (await _sectionsRepository.GetSectionsAsync(filter)).Select(section => _mapper.Map<SectionForList>(section));
             return await Task.FromResult(sections);
         }
     }

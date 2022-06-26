@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TestMaker.TestService.Domain.Models.Quersion;
 using TestMaker.TestService.Domain.Models.Question;
 using TestMaker.TestService.Domain.Services;
 
@@ -21,9 +22,9 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetQuestions()
+        public async Task<ActionResult> GetQuestions([FromQuery]GetQuestionsRequest request)
         {
-            return Ok(await _questionsService.GetQuestionsAsync());
+            return Ok(await _questionsService.GetQuestionsAsync(request));
         }
 
         [HttpGet("{id}")]
