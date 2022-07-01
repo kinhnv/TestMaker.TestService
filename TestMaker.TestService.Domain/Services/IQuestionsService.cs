@@ -18,7 +18,7 @@ namespace TestMaker.TestService.Domain.Services
 
         Task<ServiceResult<QuestionForDetails>> CreateQuestionAsync(QuestionForCreating question);
 
-        Task<ServiceResult> EditQuestionAsync(QuestionForEditing question);
+        Task<ServiceResult<QuestionForDetails>> EditQuestionAsync(QuestionForEditing question);
 
         Task<ServiceResult> DeleteQuestionAsync(Guid questionId);
     }

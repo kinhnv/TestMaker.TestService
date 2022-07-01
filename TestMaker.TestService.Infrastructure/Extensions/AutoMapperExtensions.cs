@@ -29,6 +29,7 @@ namespace TestMaker.TestService.Infrastructure.Extensions
             CreateMap<Section, SectionForList>();
             CreateMap<SectionForCreating, Section>();
             CreateMap<SectionForEditing, Section>();
+            CreateMap<Section, SectionForEditing>();
             CreateMap<Section, SectionForDetails>();
 
             CreateMap<QuestionForCreating, Question>();

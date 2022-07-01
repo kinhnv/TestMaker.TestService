@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TestMaker.Common.Models;
 using TestMaker.TestService.Domain.Models.Section;
 using TestMaker.TestService.Domain.Services;
 
@@ -23,20 +24,31 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
         [HttpGet]
         public async Task<ActionResult> GetSections([FromQuery]GetSectionsParams request)
         {
-            return Ok(await _sectionsService.GetSectionsAsync(request));
+            var result = await _sectionsService.GetSectionsAsync(request);
+
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok(result.Data);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult> GetSection(Guid id)
         {
-            var section = await _sectionsService.GetSectionAsync(id);
+            var result = await _sectionsService.GetSectionAsync(id);
 
-            if (section == null)
+            if (result is ServiceNotFoundResult<SectionForDetails>)
             {
                 return NotFound();
             }
 
-            return Ok(section);
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(result.Data);
         }
 
         [HttpPut("{id}")]
@@ -47,42 +59,48 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
                 return BadRequest();
             }
 
-            try
+            var result = await _sectionsService.EditSectionAsync(section);
+            if (result is ServiceNotFoundResult<SectionForDetails>)
             {
-                await _sectionsService.EditSectionAsync(section);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if ((await _sectionsService.GetSectionAsync(id)) == null)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
-            return NoContent();
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(result.Data);
         }
 
         [HttpPost]
         public async Task<ActionResult> PostSection(SectionForCreating section)
         {
-            return Ok(await _sectionsService.CreateSectionAsync(section));
+            var result = await _sectionsService.CreateSectionAsync(section);
+
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(result.Data);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSection(Guid id)
         {
-            if ((await _sectionsService.GetSectionAsync(id)) == null)
+            var result = await _sectionsService.DeleteSectionAsync(id);
+            if (result is ServiceNotFoundResult<SectionForDetails>)
             {
                 return NotFound();
             }
 
-            await _sectionsService.DeleteSectionAsync(id);
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
 
-            return NoContent();
+            return Ok();
         }
     }
 }

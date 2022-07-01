@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using TestMaker.Common.Models;
 using TestMaker.TestService.Domain.Models;
@@ -43,7 +44,7 @@ namespace TestMaker.TestService.Infrastructure.Services
             var data = await _testsRepository.GetPrepareTestAsync(testId);
 
             if (data == null || data.Count == 0)
-                return new ServiceResult<PreparedTest>("Not found any event and candidate");
+                return new ServiceNotFoundResult<PreparedTest>(testId.ToString());
 
             var testData = data.First().Test;
 
@@ -162,16 +163,19 @@ namespace TestMaker.TestService.Infrastructure.Services
             return new ServiceResult<TestForDetails>(await Task.FromResult(_mapper.Map<TestForDetails>(test)));
         }
 
-        public async Task<ServiceResult<GetPaginationResult<TestForList>>> GetTestsAsync()
+        public async Task<ServiceResult<GetPaginationResult<TestForList>>> GetTestsAsync(GetTestParams getTestParams)
         {
-            var result = (await _testsRepository.GetAsync()).Select(test => _mapper.Map<TestForList>(test));
+            Expression<Func<Test, bool>> predicate = x => x.IsDeleted == getTestParams.IsDeleted;
+
+            var result = (await _testsRepository.GetAsync(predicate, getTestParams.Skip, getTestParams.Page))
+                .Select(test => _mapper.Map<TestForList>(test));
 
             return new ServiceResult<GetPaginationResult<TestForList>>(new GetPaginationResult<TestForList>
             {
                 Data = result.ToList(),
-                Page = 1,
-                Take = 10,
-                TotalPage = 100
+                Page = getTestParams.Page,
+                Take = getTestParams.Take,
+                TotalPage = await _testsRepository.CountAsync(predicate)
             });
         }
 
@@ -189,7 +193,7 @@ namespace TestMaker.TestService.Infrastructure.Services
             var test = await _testsRepository.GetAsync(testId);
             if (test == null)
             {
-                return new ServiceNotFoundResult<Test>(testId.ToString());
+                return new ServiceNotFoundResult<TestForDetails>(testId.ToString());
             }
             var sections = await _sectionsRepository.GetAsync(section => section.TestId == testId && section.IsDeleted == false);
             if (sections?.Any() != true)
@@ -198,17 +202,23 @@ namespace TestMaker.TestService.Infrastructure.Services
             }
             else
             {
-                return new ServiceResult("There are some section is not deleted");
+                return new ServiceResult("There are some sections is not deleted");
             }
             await EditTestAsync(_mapper.Map<TestForEditing>(test));
             return new ServiceResult();
         }
 
-        public async Task<ServiceResult> EditTestAsync(TestForEditing test)
+        public async Task<ServiceResult<TestForDetails>> EditTestAsync(TestForEditing test)
         {
             var entity = _mapper.Map<Test>(test);
+            var result = await _testsRepository.GetAsync(test.TestId);
+            if (result == null || result.IsDeleted == true)
+            {
+                return new ServiceNotFoundResult<TestForDetails>(test.TestId.ToString());
+            }
             await _testsRepository.UpdateAsync(entity);
-            return new ServiceResult();
+
+            return await GetTestAsync(entity.TestId);
         }
 
         public async Task<ServiceResult<IEnumerable<SelectOption>>> GetTestsAsSelectOptionsAsync()

@@ -14,13 +14,13 @@ namespace TestMaker.TestService.Domain.Services
 
         Task<ServiceResult<IEnumerable<CorrectAnswer>>> GetCorrectAnswersAsync(Guid testId);
 
-        Task<ServiceResult<GetPaginationResult<TestForList>>> GetTestsAsync();
+        Task<ServiceResult<GetPaginationResult<TestForList>>> GetTestsAsync(GetTestParams getTestParams);
 
         Task<ServiceResult<TestForDetails>> GetTestAsync(Guid testId);
 
         Task<ServiceResult<TestForDetails>> CreateTestAsync(TestForCreating test);
 
-        Task<ServiceResult> EditTestAsync(TestForEditing test);
+        Task<ServiceResult<TestForDetails>> EditTestAsync(TestForEditing test);
 
         Task<ServiceResult> DeleteTestAsync(Guid testId);
 

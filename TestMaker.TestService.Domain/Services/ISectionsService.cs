@@ -16,7 +16,7 @@ namespace TestMaker.TestService.Domain.Services
 
         Task<ServiceResult<SectionForDetails>> CreateSectionAsync(SectionForCreating test);
 
-        Task<ServiceResult> EditSectionAsync(SectionForEditing test);
+        Task<ServiceResult<SectionForDetails>> EditSectionAsync(SectionForEditing test);
 
         Task<ServiceResult> DeleteSectionAsync(Guid testId);
     }

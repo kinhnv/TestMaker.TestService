@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using TestMaker.Common.Repository;
 
 namespace TestMaker.TestService.Infrastructure.Entities
 {

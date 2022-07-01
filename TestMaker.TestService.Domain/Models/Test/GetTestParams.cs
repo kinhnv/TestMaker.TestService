@@ -5,18 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using TestMaker.Common.Models;
 
-namespace TestMaker.TestService.Domain.Models.Section
+namespace TestMaker.TestService.Domain.Models.Test
 {
-    public class GetSectionsParams : GetPaginationParams
+    public class GetTestParams : GetPaginationParams
     {
-        public GetSectionsParams()
+        public GetTestParams()
         {
             Page = 1;
             Take = 10;
-            TestId = null;
             IsDeleted = false;
         }
-        public Guid? TestId { get; set; }
 
         public bool IsDeleted { get; set; }
     }

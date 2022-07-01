@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +8,10 @@ using TestMaker.TestService.Infrastructure.Entities;
 
 namespace TestMaker.TestService.Infrastructure.Repositories.Questions
 {
-    public interface IQuestionsRepository: IRepository<Question>
+    public class QuestionsRepository : Repository<Question>, IQuestionsRepository
     {
+        public QuestionsRepository(ApplicationDbContext dbContext) : base(dbContext)
+        {
+        }
     }
 }

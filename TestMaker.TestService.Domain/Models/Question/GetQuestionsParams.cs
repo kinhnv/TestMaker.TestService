@@ -11,10 +11,14 @@ namespace TestMaker.TestService.Domain.Models.Quersion
     {
         public GetQuestionsParams()
         {
-            //Page = 1;
-            //Take = 10;
+            Page = 1;
+            Take = 10;
+            SectionId = null;
+            IsDeleted = false;
         }
 
         public Guid? SectionId { get; set; }
+
+        public bool IsDeleted { get; set; }
     }
 }
