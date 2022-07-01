@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TestMaker.Common.Models;
 using TestMaker.TestService.Domain.Models.Section;
 using TestMaker.TestService.Domain.Services;
 using TestMaker.TestService.Infrastructure.Entities;
@@ -22,44 +23,52 @@ namespace TestMaker.TestService.Infrastructure.Services
             _mapper = mapper;
         }
 
-        public async Task<SectionForDetails> CreateSectionAsync(SectionForCreating section)
+        public async Task<ServiceResult<SectionForDetails>> CreateSectionAsync(SectionForCreating section)
         {
             var entity = _mapper.Map<Section>(section);
             var result = await _sectionsRepository.CreateAsync(entity);
 
-            if (result)
-                return await GetSectionAsync(entity.SectionId);
-            else
-                return null;
+            return await GetSectionAsync(entity.SectionId);
         }
 
-        public async Task<bool> DeleteSectionAsync(Guid sectionId)
+        public async Task<ServiceResult> DeleteSectionAsync(Guid sectionId)
         {
-            return  await _sectionsRepository.DeleteAsync(sectionId);
+            await _sectionsRepository.DeleteAsync(sectionId);
+            return new ServiceResult();
         }
 
-        public async Task<bool> EditSectionAsync(SectionForEditing section)
+        public async Task<ServiceResult> EditSectionAsync(SectionForEditing section)
         {
             var entity = _mapper.Map<Section>(section);
 
-            return  await _sectionsRepository.UpdateAsync(entity);
+            await _sectionsRepository.UpdateAsync(entity);
+
+            return new ServiceResult();
         }
 
-        public async Task<SectionForDetails> GetSectionAsync(Guid sectionId)
+        public async Task<ServiceResult<SectionForDetails>> GetSectionAsync(Guid sectionId)
         {
             var section = await _sectionsRepository.GetAsync(sectionId);
 
-            return await Task.FromResult(_mapper.Map<SectionForDetails>(section));
+            if (section == null) 
+                return new ServiceNotFoundResult<SectionForDetails>(sectionId.ToString());
+
+            return await Task.FromResult(new ServiceResult<SectionForDetails>(_mapper.Map<SectionForDetails>(section)));
         }
 
-        public async Task<IEnumerable<SectionForList>> GetSectionsAsync(GetQuestionsRequest request)
+        public async Task<ServiceResult<GetPaginationResult<SectionForList>>> GetSectionsAsync(GetSectionsParams request)
         {
-            var filter = new SectionsFilter
+            var sections = (await _sectionsRepository.GetAsync(x => x.TestId == request.TestId, request.Skip, request.Take)).Select(section => _mapper.Map<SectionForList>(section));
+            var count = await _sectionsRepository.CountAsync(x => x.TestId == request.TestId);
+            var result = new GetPaginationResult<SectionForList>
             {
-                TestId = request?.TestId ?? null,
+                Data = sections.ToList(),
+                Page = request.Page,
+                Take = request.Take,
+                TotalPage = count
             };
-            var sections = (await _sectionsRepository.GetSectionsAsync(filter)).Select(section => _mapper.Map<SectionForList>(section));
-            return await Task.FromResult(sections);
+
+            return new ServiceResult<GetPaginationResult<SectionForList>>(result);
         }
     }
 }

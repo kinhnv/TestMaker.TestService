@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TestMaker.Common.Models;
+using TestMaker.TestService.Domain.Models;
 using TestMaker.TestService.Domain.Models.Quersion;
 using TestMaker.TestService.Domain.Models.Question;
 
@@ -10,16 +12,14 @@ namespace TestMaker.TestService.Domain.Services
 {
     public interface IQuestionsService
     {
-        Task<IEnumerable<QuestionForList>> GetQuestionsAsync(GetQuestionsRequest request);
+        Task<ServiceResult<GetPaginationResult<QuestionForList>>> GetQuestionsAsync(GetQuestionsParams request);
 
-        Task<QuestionForDetails> GetQuestionAsync(Guid questionId);
+        Task<ServiceResult<QuestionForDetails>> GetQuestionAsync(Guid questionId);
 
-        Task<QuestionForDetails> CreateQuestionAsync(QuestionForCreating question);
+        Task<ServiceResult<QuestionForDetails>> CreateQuestionAsync(QuestionForCreating question);
 
-        Task EditQuestionAsync(QuestionForEditing question);
+        Task<ServiceResult> EditQuestionAsync(QuestionForEditing question);
 
-        Task DeleteQuestionAsync(Guid questionId);
-
-        Task<bool> QuestionExistsAsync(Guid questionId);
+        Task<ServiceResult> DeleteQuestionAsync(Guid questionId);
     }
 }

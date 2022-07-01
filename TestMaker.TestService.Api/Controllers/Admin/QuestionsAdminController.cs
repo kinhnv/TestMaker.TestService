@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TestMaker.Common.Models;
 using TestMaker.TestService.Domain.Models.Quersion;
 using TestMaker.TestService.Domain.Models.Question;
 using TestMaker.TestService.Domain.Services;
@@ -22,50 +23,66 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetQuestions([FromQuery]GetQuestionsRequest request)
+        public async Task<ActionResult> GetQuestions([FromQuery]GetQuestionsParams request)
         {
-            return Ok(await _questionsService.GetQuestionsAsync(request));
+            var result = await _questionsService.GetQuestionsAsync(request);
+
+            if (result.Successful)
+            {
+                return Ok(result.Data);
+            }
+            else
+            {
+                return BadRequest(result.Errors);
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult> GetQuestion(Guid id)
         {
-            var question = await _questionsService.GetQuestionAsync(id);
+            var result = await _questionsService.GetQuestionAsync(id);
 
-            if (question == null)
+            if (!result.Successful)
             {
-                return NotFound();
-            }
-
-            return Ok(question);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutQuestion(Guid id, QuestionForEditing question)
-        {
-            if (id != question.QuestionId)
-            {
-                return BadRequest();
-            }
-
-            try
-            {
-                await _questionsService.EditQuestionAsync(question);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _questionsService.QuestionExistsAsync(id))
+                if (result is ServiceNotFoundResult<QuestionForDetails>)
                 {
                     return NotFound();
                 }
                 else
                 {
-                    throw;
+                    return BadRequest(result.Errors);
                 }
             }
 
-            return NoContent();
+            return Ok(result.Data);
         }
+
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutQuestion(Guid id, QuestionForEditing question)
+        //{
+        //    if (id != question.QuestionId)
+        //    {
+        //        return BadRequest();
+        //    }
+
+        //    try
+        //    {
+        //        var result = await _questionsService.EditQuestionAsync(question);
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!await _questionsService.QuestionExistsAsync(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
+
+        //    return NoContent();
+        //}
 
         [HttpPost]
         public async Task<ActionResult> PostQuestion(QuestionForCreating question)
@@ -73,17 +90,17 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
             return Ok(await _questionsService.CreateQuestionAsync(question));
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteQuestion(Guid id)
-        {
-            if (!await _questionsService.QuestionExistsAsync(id))
-            {
-                return NotFound();
-            }
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteQuestion(Guid id)
+        //{
+        //    if (!await _questionsService.QuestionExistsAsync(id))
+        //    {
+        //        return NotFound();
+        //    }
 
-            await _questionsService.DeleteQuestionAsync(id);
+        //    await _questionsService.DeleteQuestionAsync(id);
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
     }
 }

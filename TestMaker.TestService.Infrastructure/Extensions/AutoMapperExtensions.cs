@@ -23,6 +23,7 @@ namespace TestMaker.TestService.Infrastructure.Extensions
             CreateMap<Test, TestForList>();
             CreateMap<TestForCreating, Test>();
             CreateMap<TestForEditing, Test>();
+            CreateMap<Test, TestForEditing>();
             CreateMap<Test, TestForDetails>();
 
             CreateMap<Section, SectionForList>();

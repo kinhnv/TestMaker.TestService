@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using TestMaker.TestService.Infrastructure.Entities;
@@ -10,16 +11,36 @@ namespace TestMaker.TestService.Infrastructure.Repositories
 {
     public class Repository<T> : IRepository<T> where T : Entity
     {
-        protected readonly ApplicationDbContext _dbContext;
+        protected readonly DbContext _dbContext;
 
-        public Repository(ApplicationDbContext dbContext)
+        public Repository(DbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public Task<List<T>> GetAllAsync()
+        public async Task<List<T>> GetAsync()
         {
-            return _dbContext.Set<T>().ToListAsync();
+            return await _dbContext.Set<T>().ToListAsync();
+        }
+
+        public async Task<List<T>> GetAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbContext.Set<T>().Where(predicate).ToListAsync();
+        }
+
+        public async Task<List<T>> GetAsync(Expression<Func<T, bool>> predicate, int skip, int take)
+        {
+            return await _dbContext.Set<T>().Where(predicate).Skip(skip).Take(take).ToListAsync();
+        }
+
+        public async Task<int> CountAsync()
+        {
+            return await _dbContext.Set<T>().CountAsync();
+        }
+
+        public async Task<int> CountAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _dbContext.Set<T>().Where(predicate).CountAsync();
         }
 
         public async Task<T> GetAsync(Guid id)

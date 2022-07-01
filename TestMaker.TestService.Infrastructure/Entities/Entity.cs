@@ -8,5 +8,6 @@ namespace TestMaker.TestService.Infrastructure.Entities
 {
     public class Entity
     {
+        public bool IsDeleted { get; set; }
     }
 }

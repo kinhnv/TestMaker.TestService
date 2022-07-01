@@ -12,17 +12,5 @@ namespace TestMaker.TestService.Infrastructure.Repositories.Sections
         public SectionsRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
         }
-
-        public async Task<List<Section>> GetSectionsAsync(SectionsFilter filter)
-        {
-            var query = _dbContext.Sections.AsQueryable();
-
-            if (filter?.TestId != null)
-            {
-                query = query.Where(x => x.TestId == filter.TestId);
-            }
-
-            return await Task.FromResult(query.ToList());
-        }
     }
 }
