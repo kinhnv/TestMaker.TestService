@@ -3,77 +3,91 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using TestMaker.Common.Models;
+using TestMaker.TestService.Domain.Models;
 using TestMaker.TestService.Domain.Models.Quersion;
 using TestMaker.TestService.Domain.Models.Question;
 using TestMaker.TestService.Domain.Services;
 using TestMaker.TestService.Infrastructure.Entities;
+using TestMaker.TestService.Infrastructure.Repositories.Questions;
 
 namespace TestMaker.TestService.Infrastructure.Services
 {
     public class QuestionsService : IQuestionsService
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IQuestionsRepository _questionsRepository;
         private readonly IMapper _mapper;
 
-        public QuestionsService(ApplicationDbContext dbContext, IMapper mapper)
+        public QuestionsService(IQuestionsRepository questionsRepository, IMapper mapper)
         {
-            _dbContext = dbContext;
+            _questionsRepository = questionsRepository;
             _mapper = mapper;
         }
 
-        public async Task<QuestionForDetails> CreateQuestionAsync(QuestionForCreating question)
+        public async Task<ServiceResult<QuestionForDetails>> CreateQuestionAsync(QuestionForCreating question)
         {
             var entity = _mapper.Map<Question>(question);
-            _dbContext.Questions.Add(entity);
-            await _dbContext.SaveChangesAsync();
+
+            var result = await _questionsRepository.CreateAsync(entity);
 
             return await GetQuestionAsync(entity.QuestionId);
         }
 
-        public async Task DeleteQuestionAsync(Guid questionId)
+        public async Task<ServiceResult> DeleteQuestionAsync(Guid questionId)
         {
-            var question = await _dbContext.Questions.FindAsync(questionId);
-            if (question != null)
+            var question = await _questionsRepository.GetAsync(questionId);
+            if (question == null)
             {
-                _dbContext.Questions.Remove(question);
-                await _dbContext.SaveChangesAsync();
+                return new ServiceNotFoundResult<Section>(questionId.ToString());
             }
+            question.IsDeleted = true;
+            await EditQuestionAsync(_mapper.Map<QuestionForEditing>(question));
+            return new ServiceResult();
         }
 
-        public async Task EditQuestionAsync(QuestionForEditing question)
+        public async Task<ServiceResult<QuestionForDetails>> EditQuestionAsync(QuestionForEditing question)
         {
             var entity = _mapper.Map<Question>(question);
 
-            _dbContext.Entry(entity).State = EntityState.Modified;
+            var result = await _questionsRepository.GetAsync(question.QuestionId);
+            if (result == null || result.IsDeleted == true)
+            {
+                return new ServiceNotFoundResult<QuestionForDetails>(question.QuestionId.ToString());
+            }
 
-            await _dbContext.SaveChangesAsync();
+            await _questionsRepository.UpdateAsync(entity);
+            return await GetQuestionAsync(entity.QuestionId);
         }
 
-        public async Task<QuestionForDetails> GetQuestionAsync(Guid questionId)
+        public async Task<ServiceResult<QuestionForDetails>> GetQuestionAsync(Guid questionId)
         {
-            var question = _dbContext.Questions.SingleOrDefault(x => x.QuestionId == questionId);
+            var question = await _questionsRepository.GetAsync(questionId);
 
             if (question == null)
-                return null;
+                return new ServiceNotFoundResult<QuestionForDetails>(questionId.ToString());
 
-            return await Task.FromResult(_mapper.Map<QuestionForDetails>(question));
+            return await Task.FromResult(new ServiceResult<QuestionForDetails>(_mapper.Map<QuestionForDetails>(question)));
         }
 
-        public async Task<IEnumerable<QuestionForList>> GetQuestionsAsync(GetQuestionsRequest request)
+        public async Task<ServiceResult<GetPaginationResult<QuestionForList>>> GetQuestionsAsync(GetQuestionsParams getQuestionsParams)
         {
-            var query = _dbContext.Questions.AsQueryable();
-            if (request?.SectionId != null)
+            Expression<Func<Question, bool>> predicate = x => x.IsDeleted == getQuestionsParams.IsDeleted &&
+                (getQuestionsParams.SectionId == null || getQuestionsParams.SectionId == x.SectionId);
+
+            var quetsions = (await _questionsRepository.GetAsync(predicate, getQuestionsParams.Skip, getQuestionsParams.Take))
+                .Select(section => _mapper.Map<QuestionForList>(section));
+            var count = await _questionsRepository.CountAsync(predicate);
+            var result = new GetPaginationResult<QuestionForList>
             {
-                query = query.Where(x => x.SectionId == request.SectionId);
-            }
-            var result = query.ToList().Select(question => _mapper.Map<QuestionForList>(question));
-            return await Task.FromResult(result);
-        }
+                Data = quetsions.ToList(),
+                Page = getQuestionsParams.Page,
+                Take = getQuestionsParams.Take,
+                TotalPage = count
+            };
 
-        public async Task<bool> QuestionExistsAsync(Guid questionId)
-        {
-            return await _dbContext.Questions.AnyAsync(e => e.QuestionId == questionId);
+            return new ServiceResult<GetPaginationResult<QuestionForList>>(result);
         }
     }
 }

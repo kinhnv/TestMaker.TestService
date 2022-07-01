@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using TestMaker.Common.Models;
+using TestMaker.TestService.Domain.Models.Test;
 using TestMaker.TestService.Domain.Services;
 
 namespace TestMaker.TestService.Api.Controllers
@@ -19,21 +21,47 @@ namespace TestMaker.TestService.Api.Controllers
         [HttpGet]
         public async Task<ActionResult> GetTests()
         {
-            return Ok(await _testsService.GetTestsAsync());
+            var result = await _testsService.GetTestsAsync(new GetTestParams());
+
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(result.Data);
         }
 
         [HttpGet]
         [Route("PrepareTest")]
         public async Task<ActionResult> PrepareTestAsync(Guid testId)
         {
-            return Ok(await _testsService.PrepareTestAsync(testId));
+            var result = await _testsService.PrepareTestAsync(testId);
+
+            if (result is ServiceNotFoundResult<PreparedTest>)
+            {
+                return NotFound();
+            }
+
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(result.Data);
         }
 
         [HttpGet]
         [Route("GetCorrectAnswers")]
         public async Task<IActionResult> GetCorrectAnswersAsync(Guid testId)
         {
-            return Ok(await _testsService.GetCorrectAnswersAsync(testId));
+            var result = await _testsService.GetCorrectAnswersAsync(testId);
+
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(result.Data);
         }
     }
 }

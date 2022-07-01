@@ -22,8 +22,11 @@ namespace TestMaker.TestService.Infrastructure.Entities
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Test>().HasKey(t => t.TestId);
-            modelBuilder.Entity<Section>().HasKey(t => t.SectionId);
-            modelBuilder.Entity<Question>().HasKey(t => t.QuestionId);
+            modelBuilder.Entity<Test>().Property(t => t.IsDeleted).HasDefaultValue(false);
+            modelBuilder.Entity<Section>().HasKey(s => s.SectionId);
+            modelBuilder.Entity<Section>().Property(s => s.IsDeleted).HasDefaultValue(false);
+            modelBuilder.Entity<Question>().HasKey(q => q.QuestionId);
+            modelBuilder.Entity<Question>().Property(q => q.IsDeleted).HasDefaultValue(false);
         }
     }
 }

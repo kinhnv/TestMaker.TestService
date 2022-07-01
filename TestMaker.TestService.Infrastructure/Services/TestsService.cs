@@ -2,13 +2,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using TestMaker.Common.Models;
 using TestMaker.TestService.Domain.Models;
 using TestMaker.TestService.Domain.Models.Question;
 using TestMaker.TestService.Domain.Models.Question.QuestionTypes;
 using TestMaker.TestService.Domain.Models.Test;
 using TestMaker.TestService.Domain.Services;
 using TestMaker.TestService.Infrastructure.Entities;
+using TestMaker.TestService.Infrastructure.Repositories.Sections;
 using TestMaker.TestService.Infrastructure.Repositories.Tests;
 using static TestMaker.TestService.Domain.Models.Test.PreparedTest;
 using static TestMaker.TestService.Domain.Models.Test.PreparedTest.PreparedSection;
@@ -19,22 +22,29 @@ namespace TestMaker.TestService.Infrastructure.Services
     {
         #region Fields
         private readonly ITestsRepository _testsRepository;
+        private readonly ISectionsRepository _sectionsRepository;
         private readonly IMapper _mapper;
         #endregion
 
         #region Ctrls
-        public TestsService(ITestsRepository repository, IMapper mapper)
+        public TestsService(
+            ITestsRepository repository,
+            ISectionsRepository sectionsRepository, IMapper mapper)
         {
             _testsRepository = repository;
+            _sectionsRepository = sectionsRepository;
             _mapper = mapper;
         }
         #endregion
 
         #region Methods
 
-        public async Task<PreparedTest> PrepareTestAsync(Guid testId)
+        public async Task<ServiceResult<PreparedTest>> PrepareTestAsync(Guid testId)
         {
             var data = await _testsRepository.GetPrepareTestAsync(testId);
+
+            if (data == null || data.Count == 0)
+                return new ServiceNotFoundResult<PreparedTest>(testId.ToString());
 
             var testData = data.First().Test;
 
@@ -45,7 +55,7 @@ namespace TestMaker.TestService.Infrastructure.Services
                     Questions = g.Select(x => x.Question)
                 });
 
-            return new PreparedTest
+            return new ServiceResult<PreparedTest>(new PreparedTest
             {
                 TestId = testData.TestId,
                 Name = testData.Name,
@@ -104,14 +114,14 @@ namespace TestMaker.TestService.Infrastructure.Services
                         return result;
                     }).Where(x => x != null)
                 })
-            };
+            });
         }
 
-        public async Task<IEnumerable<CorrectAnswer>> GetCorrectAnswersAsync(Guid testId)
+        public async Task<ServiceResult<IEnumerable<CorrectAnswer>>> GetCorrectAnswersAsync(Guid testId)
         {
             var questions = await _testsRepository.GetQuestionsByTestIdAsync(testId);
 
-            return questions.Select(question =>
+            return new ServiceResult<IEnumerable<CorrectAnswer>>(questions.Select(question =>
             {
                 var answerAsJson = string.Empty;
 
@@ -140,56 +150,84 @@ namespace TestMaker.TestService.Infrastructure.Services
                     QuestionId = question.QuestionId,
                     AnswerAsJson = answerAsJson
                 };
-            });
+            }));
         }
 
-        public async Task<TestForDetails> GetTestAsync(Guid testId)
+        public async Task<ServiceResult<TestForDetails>> GetTestAsync(Guid testId)
         {
             var test = await _testsRepository.GetAsync(testId);
 
             if (test == null)
-                return null;
+                return new ServiceNotFoundResult<TestForDetails>(testId.ToString());
 
-            return await Task.FromResult(_mapper.Map<TestForDetails>(test));
+            return new ServiceResult<TestForDetails>(await Task.FromResult(_mapper.Map<TestForDetails>(test)));
         }
 
-        public async Task<IEnumerable<TestForList>> GetTestsAsync()
+        public async Task<ServiceResult<GetPaginationResult<TestForList>>> GetTestsAsync(GetTestParams getTestParams)
         {
-            var result = (await _testsRepository.GetAllAsync()).Select(test => _mapper.Map<TestForList>(test));
+            Expression<Func<Test, bool>> predicate = x => x.IsDeleted == getTestParams.IsDeleted;
 
-            return result;
+            var result = (await _testsRepository.GetAsync(predicate, getTestParams.Skip, getTestParams.Page))
+                .Select(test => _mapper.Map<TestForList>(test));
+
+            return new ServiceResult<GetPaginationResult<TestForList>>(new GetPaginationResult<TestForList>
+            {
+                Data = result.ToList(),
+                Page = getTestParams.Page,
+                Take = getTestParams.Take,
+                TotalPage = await _testsRepository.CountAsync(predicate)
+            });
         }
 
-        public async Task<TestForDetails> CreateTestAsync(TestForCreating test)
+        public async Task<ServiceResult<TestForDetails>> CreateTestAsync(TestForCreating test)
         {
             var entity = _mapper.Map<Test>(test);
 
-            var result = await _testsRepository.CreateAsync(entity);
-            if (result)
-                return await GetTestAsync(entity.TestId);
+            await _testsRepository.CreateAsync(entity);
+
+            return await GetTestAsync(entity.TestId);
+        }
+
+        public async Task<ServiceResult> DeleteTestAsync(Guid testId)
+        {
+            var test = await _testsRepository.GetAsync(testId);
+            if (test == null)
+            {
+                return new ServiceNotFoundResult<TestForDetails>(testId.ToString());
+            }
+            var sections = await _sectionsRepository.GetAsync(section => section.TestId == testId && section.IsDeleted == false);
+            if (sections?.Any() != true)
+            {
+                test.IsDeleted = true;
+            }
             else
-                return null;
+            {
+                return new ServiceResult("There are some sections is not deleted");
+            }
+            await EditTestAsync(_mapper.Map<TestForEditing>(test));
+            return new ServiceResult();
         }
 
-        public async Task<bool> DeleteTestAsync(Guid testId)
-        {
-            return await _testsRepository.DeleteAsync(testId);
-        }
-
-        public async Task<bool> EditTestAsync(TestForEditing test)
+        public async Task<ServiceResult<TestForDetails>> EditTestAsync(TestForEditing test)
         {
             var entity = _mapper.Map<Test>(test);
+            var result = await _testsRepository.GetAsync(test.TestId);
+            if (result == null || result.IsDeleted == true)
+            {
+                return new ServiceNotFoundResult<TestForDetails>(test.TestId.ToString());
+            }
+            await _testsRepository.UpdateAsync(entity);
 
-            return await _testsRepository.UpdateAsync(entity);
+            return await GetTestAsync(entity.TestId);
         }
 
-        public async Task<IEnumerable<SelectOption>> GetTestsAsSelectOptionsAsync()
+        public async Task<ServiceResult<IEnumerable<SelectOption>>> GetTestsAsSelectOptionsAsync()
         {
-            return (await _testsRepository.GetAllAsync()).Select(x => new SelectOption
+            return new ServiceResult<IEnumerable<SelectOption>> ((await _testsRepository.GetAsync()).Select(x => new SelectOption
             {
                 Title = x.Name,
                 Value = x.TestId.ToString()
-            });
+            }));
         }
         #endregion
     }

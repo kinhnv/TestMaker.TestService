@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TestMaker.Common.Models;
 using TestMaker.TestService.Domain.Models.Quersion;
 using TestMaker.TestService.Domain.Models.Question;
 using TestMaker.TestService.Domain.Services;
@@ -22,22 +23,33 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
         }
 
         [HttpGet]
-        public async Task<ActionResult> GetQuestions([FromQuery]GetQuestionsRequest request)
+        public async Task<ActionResult> GetQuestions([FromQuery]GetQuestionsParams request)
         {
-            return Ok(await _questionsService.GetQuestionsAsync(request));
+            var result = await _questionsService.GetQuestionsAsync(request);
+
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
+            return Ok(result.Data);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult> GetQuestion(Guid id)
         {
-            var question = await _questionsService.GetQuestionAsync(id);
+            var result = await _questionsService.GetQuestionAsync(id);
 
-            if (question == null)
+            if (result is ServiceNotFoundResult<QuestionForDetails>)
             {
                 return NotFound();
             }
 
-            return Ok(question);
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(result.Data);
         }
 
         [HttpPut("{id}")]
@@ -48,42 +60,48 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
                 return BadRequest();
             }
 
-            try
+            var result = await _questionsService.EditQuestionAsync(question);
+            if (result is ServiceNotFoundResult<QuestionForDetails>)
             {
-                await _questionsService.EditQuestionAsync(question);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!await _questionsService.QuestionExistsAsync(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
-            return NoContent();
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(result.Data);
         }
 
         [HttpPost]
         public async Task<ActionResult> PostQuestion(QuestionForCreating question)
         {
-            return Ok(await _questionsService.CreateQuestionAsync(question));
+            var result = await _questionsService.CreateQuestionAsync(question);
+
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(result.Data);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteQuestion(Guid id)
         {
-            if (!await _questionsService.QuestionExistsAsync(id))
+            var result = await _questionsService.DeleteQuestionAsync(id);
+            if (result is ServiceNotFoundResult<QuestionForDetails>)
             {
                 return NotFound();
             }
 
-            await _questionsService.DeleteQuestionAsync(id);
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
 
-            return NoContent();
+            return Ok();
         }
     }
 }

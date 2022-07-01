@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TestMaker.Common.Models;
 using TestMaker.TestService.Domain.Models.Test;
 using TestMaker.TestService.Domain.Services;
 
@@ -21,27 +22,48 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
         [HttpGet]
         public async Task<ActionResult> GetTests()
         {
-            return Ok(await _testsService.GetTestsAsync());
+            var result = await _testsService.GetTestsAsync(new GetTestParams());
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
+            else
+            {
+                return Ok(result.Data);
+            }
         }
 
         [HttpGet]
         [Route("SelectOptions")]
         public async Task<ActionResult> GetSelectOptions()
         {
-            return Ok(await _testsService.GetTestsAsSelectOptionsAsync());
+            var result = await _testsService.GetTestsAsSelectOptionsAsync();
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
+            else
+            {
+                return Ok(result.Data);
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult> GetTest(Guid id)
         {
-            var test = await _testsService.GetTestAsync(id);
+            var result = await _testsService.GetTestAsync(id);
 
-            if (test == null)
+            if (result is ServiceNotFoundResult<TestForDetails>)
             {
                 return NotFound();
             }
 
-            return Ok(test);
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(result.Data);
         }
 
         [HttpPut("{id}")]
@@ -52,23 +74,18 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
                 return BadRequest();
             }
 
-            try
+            var result = await _testsService.EditTestAsync(test);
+            if (result is ServiceNotFoundResult<TestForDetails>)
             {
-                await _testsService.EditTestAsync(test);
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (await _testsService.GetTestAsync(id) == null)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
-            return NoContent();
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok(result.Data);
         }
 
         [HttpPost]
@@ -76,23 +93,29 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
         {
             var result = await _testsService.CreateTestAsync(test);
 
-            if (result == null)
-                return BadRequest();
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
 
-            return Ok(result);
+            return Ok(result.Data);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTest(Guid id)
         {
-            if (await _testsService.GetTestAsync(id) == null)
+            var result = await _testsService.DeleteTestAsync(id);
+            if (result is ServiceNotFoundResult<TestForDetails>)
             {
                 return NotFound();
             }
 
-            await _testsService.DeleteTestAsync(id);
+            if (!result.Successful)
+            {
+                return BadRequest(result.Errors);
+            }
 
-            return NoContent();
+            return Ok();
         }
     }
 }
