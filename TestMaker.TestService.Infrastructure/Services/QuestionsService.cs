@@ -38,7 +38,7 @@ namespace TestMaker.TestService.Infrastructure.Services
         public async Task<ServiceResult> DeleteQuestionAsync(Guid questionId)
         {
             var question = await _questionsRepository.GetAsync(questionId);
-            if (question == null)
+            if (question == null || question.IsDeleted == true)
             {
                 return new ServiceNotFoundResult<Section>(questionId.ToString());
             }

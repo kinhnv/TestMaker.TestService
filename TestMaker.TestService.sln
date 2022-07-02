@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestMaker.Common", "Libraries\TestMaker.Common\TestMaker.Common.csproj", "{E2E5DA7E-69D3-4F64-8F9D-09CA528BA49C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCore.Environment", "Libraries\AspNetCore.Environment\AspNetCore.Environment.csproj", "{0CC94206-28EB-4349-B86A-F94E496F8039}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,12 +49,17 @@ Global
 		{E2E5DA7E-69D3-4F64-8F9D-09CA528BA49C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E2E5DA7E-69D3-4F64-8F9D-09CA528BA49C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E2E5DA7E-69D3-4F64-8F9D-09CA528BA49C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CC94206-28EB-4349-B86A-F94E496F8039}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CC94206-28EB-4349-B86A-F94E496F8039}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CC94206-28EB-4349-B86A-F94E496F8039}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CC94206-28EB-4349-B86A-F94E496F8039}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E2E5DA7E-69D3-4F64-8F9D-09CA528BA49C} = {570C80D7-4C4B-4E10-A8B4-9E1869DC051C}
+		{0CC94206-28EB-4349-B86A-F94E496F8039} = {570C80D7-4C4B-4E10-A8B4-9E1869DC051C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2FBF5ED6-6B9C-4FB6-9DC1-9B2CC38A0278}
