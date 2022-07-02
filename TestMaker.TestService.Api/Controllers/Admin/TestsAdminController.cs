@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TestMaker.Common.Models;
+using TestMaker.TestService.Domain.Models;
 using TestMaker.TestService.Domain.Models.Test;
 using TestMaker.TestService.Domain.Services;
 
@@ -23,14 +25,8 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
         public async Task<ActionResult> GetTests()
         {
             var result = await _testsService.GetTestsAsync(new GetTestParams());
-            if (!result.Successful)
-            {
-                return BadRequest(result.Errors);
-            }
-            else
-            {
-                return Ok(result.Data);
-            }
+
+            return Ok(new ApiResult<GetPaginationResult<TestForList>>(result));
         }
 
         [HttpGet]
@@ -38,14 +34,7 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
         public async Task<ActionResult> GetSelectOptions()
         {
             var result = await _testsService.GetTestsAsSelectOptionsAsync();
-            if (!result.Successful)
-            {
-                return BadRequest(result.Errors);
-            }
-            else
-            {
-                return Ok(result.Data);
-            }
+            return Ok(new ApiResult<IEnumerable<SelectOption>>(result));
         }
 
         [HttpGet("{id}")]
@@ -53,17 +42,7 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
         {
             var result = await _testsService.GetTestAsync(id);
 
-            if (result is ServiceNotFoundResult<TestForDetails>)
-            {
-                return NotFound();
-            }
-
-            if (!result.Successful)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok(result.Data);
+            return Ok(new ApiResult<TestForDetails>(result));
         }
 
         [HttpPut("{id}")]
@@ -71,51 +50,26 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
         {
             if (id != test.TestId)
             {
-                return BadRequest();
+                return Ok(new ApiResult());
             }
 
             var result = await _testsService.EditTestAsync(test);
-            if (result is ServiceNotFoundResult<TestForDetails>)
-            {
-                return NotFound();
-            }
 
-            if (!result.Successful)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok(result.Data);
+            return Ok(new ApiResult<TestForDetails>(result));
         }
 
         [HttpPost]
         public async Task<ActionResult> PostTest(TestForCreating test)
         {
             var result = await _testsService.CreateTestAsync(test);
-
-            if (!result.Successful)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok(result.Data);
+            return Ok(new ApiResult<TestForDetails>(result));
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTest(Guid id)
         {
             var result = await _testsService.DeleteTestAsync(id);
-            if (result is ServiceNotFoundResult<TestForDetails>)
-            {
-                return NotFound();
-            }
-
-            if (!result.Successful)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok();
+            return Ok(new ApiResult(result));
         }
     }
 }

@@ -25,30 +25,14 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
         public async Task<ActionResult> GetSections([FromQuery]GetSectionsParams request)
         {
             var result = await _sectionsService.GetSectionsAsync(request);
-
-            if (!result.Successful)
-            {
-                return BadRequest(result.Errors);
-            }
-            return Ok(result.Data);
+            return Ok(new ApiResult<GetPaginationResult<SectionForList>>(result));
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult> GetSection(Guid id)
         {
             var result = await _sectionsService.GetSectionAsync(id);
-
-            if (result is ServiceNotFoundResult<SectionForDetails>)
-            {
-                return NotFound();
-            }
-
-            if (!result.Successful)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok(result.Data);
+            return Ok(new ApiResult<SectionForDetails>(result));
         }
 
         [HttpPut("{id}")]
@@ -56,51 +40,25 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
         {
             if (id != section.SectionId)
             {
-                return BadRequest();
+                return Ok(new ApiResult());
             }
 
             var result = await _sectionsService.EditSectionAsync(section);
-            if (result is ServiceNotFoundResult<SectionForDetails>)
-            {
-                return NotFound();
-            }
-
-            if (!result.Successful)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok(result.Data);
+            return Ok(new ApiResult<SectionForDetails>(result));
         }
 
         [HttpPost]
         public async Task<ActionResult> PostSection(SectionForCreating section)
         {
             var result = await _sectionsService.CreateSectionAsync(section);
-
-            if (!result.Successful)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok(result.Data);
+            return Ok(new ApiResult<SectionForDetails>(result));
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSection(Guid id)
         {
             var result = await _sectionsService.DeleteSectionAsync(id);
-            if (result is ServiceNotFoundResult<SectionForDetails>)
-            {
-                return NotFound();
-            }
-
-            if (!result.Successful)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok();
+            return Ok(new ApiResult(result));
         }
     }
 }
