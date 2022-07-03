@@ -9,15 +9,6 @@ namespace TestMaker.TestService.Domain.Models.Section
 {
     public class GetSectionsParams : GetPaginationParams
     {
-        public GetSectionsParams()
-        {
-            Page = 1;
-            Take = 10;
-            TestId = null;
-            IsDeleted = false;
-        }
-        public Guid? TestId { get; set; }
-
-        public bool IsDeleted { get; set; }
+        public Guid? TestId { get; set; } = null;
     }
 }

@@ -8,14 +8,9 @@ namespace TestMaker.Common.Models
 {
     public class GetPaginationParams
     {
-        public GetPaginationParams()
-        {
-            Page = 1;
-            Take = 10;
-        }
-        public int Page { get; set; }
+        public int Page { get; set; } = 1;
 
-        public int Take { get; set; }
+        public int Take { get; set; } = 10;
 
         public int Skip
         {
@@ -24,5 +19,7 @@ namespace TestMaker.Common.Models
                 return Math.Max(Page - 1, 0) * Take;
             }
         }
+
+        public bool IsDeleted { get; set; } = false;
     }
 }

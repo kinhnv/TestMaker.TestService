@@ -44,65 +44,75 @@ namespace TestMaker.Common.Repository
 
         public async Task<T> GetAsync(Guid id)
         {
-            try
-            {
-                return await _dbContext.Set<T>().FindAsync(id);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return await _dbContext.Set<T>().FindAsync(id);
         }
 
-        public async Task<bool> CreateAsync(T entity)
+        public async Task CreateAsync(T entity)
         {
-            try
+            await _dbContext.Set<T>().AddAsync(entity);
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task CreateAsync(List<T> entities)
+        {
+            foreach (var entity in entities)
             {
                 await _dbContext.Set<T>().AddAsync(entity);
-                await _dbContext.SaveChangesAsync();
-
-                return true;
             }
-            catch (Exception)
-            {
-                return false;
-            }
+            await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<bool> UpdateAsync(T entity)
+        public async Task UpdateAsync(T entity)
         {
-            try
+            _dbContext.Entry(entity).State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(List<T> entities)
+        {
+            foreach (var entity in entities)
             {
                 _dbContext.Entry(entity).State = EntityState.Modified;
-                await _dbContext.SaveChangesAsync();
-
-                return true;
-
             }
-            catch (Exception)
-            {
-                return false;
-            }
+            await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
-            try
-            {
-                var entity = await GetAsync(id);
-                if (entity != null)
-                {
-                    _dbContext.Set<T>().Remove(entity);
-                    await _dbContext.SaveChangesAsync();
+            var entity = await GetAsync(id);
+            entity.IsDeleted = true;
+            _dbContext.Entry(entity).State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
+        }
 
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception)
+        public async Task DeleteAsync(Expression<Func<T, bool>> predicate)
+        {
+            var entities = await GetAsync(predicate);
+            foreach (var entity in entities)
             {
-                return false;
+                entity.IsDeleted = true;
+                _dbContext.Entry(entity).State = EntityState.Modified;
             }
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task RestoreAsync(Guid id)
+        {
+            var entity = await GetAsync(id);
+            entity.IsDeleted = false;
+            _dbContext.Entry(entity).State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task RestoreAsync(Expression<Func<T, bool>> predicate)
+        {
+            var entities = await GetAsync(predicate);
+            foreach (var entity in entities)
+            {
+                entity.IsDeleted = false;
+                _dbContext.Entry(entity).State = EntityState.Modified;
+            }
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

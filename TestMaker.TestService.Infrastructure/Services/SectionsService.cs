@@ -34,7 +34,7 @@ namespace TestMaker.TestService.Infrastructure.Services
         {
             var entity = _mapper.Map<Section>(section);
 
-            var result = await _sectionsRepository.CreateAsync(entity);
+            await _sectionsRepository.CreateAsync(entity);
 
             return await GetSectionAsync(entity.SectionId);
         }
@@ -47,15 +47,12 @@ namespace TestMaker.TestService.Infrastructure.Services
                 return new ServiceNotFoundResult<Section>(sectionId.ToString());
             }
             var questions = await _questionsRepository.GetAsync(question => question.SectionId == sectionId && question.IsDeleted == false);
-            if (questions?.Any() != true)
-            {
-                section.IsDeleted = true;
-            }
-            else
+            if (questions?.Any() == true)
             {
                 return new ServiceResult("There are some questions is not deleted");
             }
-            await EditSectionAsync(_mapper.Map<SectionForEditing>(section));
+
+            await _sectionsRepository.DeleteAsync(sectionId);
             return new ServiceResult();
         }
 
