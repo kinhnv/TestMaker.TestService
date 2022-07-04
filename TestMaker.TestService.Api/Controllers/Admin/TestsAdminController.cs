@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TestMaker.Common.Models;
@@ -10,6 +12,7 @@ using TestMaker.TestService.Domain.Services;
 
 namespace TestMaker.TestService.Api.Admin.Controllers.Admin
 {
+    [Authorize]
     [Route("api/Admin/Tests")]
     [ApiController]
     public class TestsAdminController : ControllerBase
@@ -24,6 +27,8 @@ namespace TestMaker.TestService.Api.Admin.Controllers.Admin
         [HttpGet]
         public async Task<ActionResult> GetTests()
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
+            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? null;
             var result = await _testsService.GetTestsAsync(new GetTestParams());
 
             return Ok(new ApiResult<GetPaginationResult<TestForList>>(result));

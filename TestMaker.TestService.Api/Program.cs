@@ -1,5 +1,6 @@
 using AspNetCore.Environment.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using TestMaker.TestService.Infrastructure.Entities;
 using TestMaker.TestService.Infrastructure.Extensions;
 
@@ -26,6 +27,17 @@ builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient();
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.Authority = "http://localhost:60001";
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateAudience = false
+        };
+        options.RequireHttpsMetadata = false;
+    });
 
 var app = builder.Build();
 
@@ -38,8 +50,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowAll");
 
-app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
