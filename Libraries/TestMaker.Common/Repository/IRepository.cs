@@ -21,10 +21,20 @@ namespace TestMaker.Common.Repository
 
         Task<T> GetAsync(Guid id);
 
-        Task<bool> CreateAsync(T entity);
+        Task CreateAsync(T entity);
 
-        Task<bool> UpdateAsync(T entity);
+        Task CreateAsync(List<T> entities);
 
-        Task<bool> DeleteAsync(Guid id);
+        Task UpdateAsync(T entity);
+
+        Task UpdateAsync(List<T> entities);
+
+        Task DeleteAsync(Guid id);
+
+        Task DeleteAsync(Expression<Func<T, bool>> predicate);
+
+        Task RestoreAsync(Guid id);
+
+        Task RestoreAsync(Expression<Func<T, bool>> predicate);
     }
 }

@@ -9,13 +9,5 @@ namespace TestMaker.TestService.Domain.Models.Test
 {
     public class GetTestParams : GetPaginationParams
     {
-        public GetTestParams()
-        {
-            Page = 1;
-            Take = 10;
-            IsDeleted = false;
-        }
-
-        public bool IsDeleted { get; set; }
     }
 }

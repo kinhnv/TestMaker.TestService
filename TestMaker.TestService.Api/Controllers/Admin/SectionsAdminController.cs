@@ -8,7 +8,7 @@ using TestMaker.Common.Models;
 using TestMaker.TestService.Domain.Models.Section;
 using TestMaker.TestService.Domain.Services;
 
-namespace TestMaker.TestService.Api.Admin.Controllers.Admin
+namespace TestMaker.TestService.Api.Controllers.Admin
 {
     [Route("api/Admin/Sections")]
     [ApiController]

@@ -9,7 +9,7 @@ using TestMaker.TestService.Domain.Models.Quersion;
 using TestMaker.TestService.Domain.Models.Question;
 using TestMaker.TestService.Domain.Services;
 
-namespace TestMaker.TestService.Api.Admin.Controllers.Admin
+namespace TestMaker.TestService.Api.Controllers.Admin
 {
     [Route("api/Admin/Questions")]
     [ApiController]

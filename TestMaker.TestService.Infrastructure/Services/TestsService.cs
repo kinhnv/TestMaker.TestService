@@ -196,15 +196,12 @@ namespace TestMaker.TestService.Infrastructure.Services
                 return new ServiceNotFoundResult<TestForDetails>(testId.ToString());
             }
             var sections = await _sectionsRepository.GetAsync(section => section.TestId == testId && section.IsDeleted == false);
-            if (sections?.Any() != true)
-            {
-                test.IsDeleted = true;
-            }
-            else
+            if (sections?.Any() == true)
             {
                 return new ServiceResult("There are some sections is not deleted");
             }
-            await EditTestAsync(_mapper.Map<TestForEditing>(test));
+
+            await _testsRepository.DeleteAsync(testId);
             return new ServiceResult();
         }
 

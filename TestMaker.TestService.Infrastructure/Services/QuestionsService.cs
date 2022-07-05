@@ -30,7 +30,7 @@ namespace TestMaker.TestService.Infrastructure.Services
         {
             var entity = _mapper.Map<Question>(question);
 
-            var result = await _questionsRepository.CreateAsync(entity);
+            await _questionsRepository.CreateAsync(entity);
 
             return await GetQuestionAsync(entity.QuestionId);
         }
@@ -38,12 +38,11 @@ namespace TestMaker.TestService.Infrastructure.Services
         public async Task<ServiceResult> DeleteQuestionAsync(Guid questionId)
         {
             var question = await _questionsRepository.GetAsync(questionId);
-            if (question == null)
+            if (question == null || question.IsDeleted == true)
             {
                 return new ServiceNotFoundResult<Section>(questionId.ToString());
             }
-            question.IsDeleted = true;
-            await EditQuestionAsync(_mapper.Map<QuestionForEditing>(question));
+            await _questionsRepository.DeleteAsync(questionId);
             return new ServiceResult();
         }
 
