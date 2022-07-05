@@ -39,7 +39,7 @@ namespace TestMaker.Common.Models
         }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public List<string> Errors { get; set; }
+        public List<string>? Errors { get; set; }
 
         public int Code { get; set; }
 
@@ -71,7 +71,7 @@ namespace TestMaker.Common.Models
         }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public T Data { get; set; }
+        public T? Data { get; set; }
 
         protected override int GetCodeFromServiceResult(ServiceResult serviceResult)
         {

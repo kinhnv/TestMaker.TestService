@@ -48,6 +48,6 @@ namespace TestMaker.Common.Models
             Data = default;
         }
 
-        public T Data { get; set; }
+        public T? Data { get; set; }
     }
 }
