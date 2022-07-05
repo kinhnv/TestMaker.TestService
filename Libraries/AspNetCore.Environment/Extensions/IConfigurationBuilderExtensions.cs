@@ -24,10 +24,14 @@ namespace AspNetCore.Environment.Extensions
 
                 var source = builder.Configuration.GetSection("ACS").Get<AdditionalConfigurationSourceArray>();
 
-                source.ForEach(acs =>
+                if (source?.Count > 0)
                 {
-                    service.AddSource(acs);
-                });
+                    source.ForEach(acs =>
+                    {
+                        service.AddSource(acs);
+                    });
+                }
+
             });
             return builder;
         }
