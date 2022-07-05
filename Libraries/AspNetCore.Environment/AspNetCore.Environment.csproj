@@ -5,9 +5,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
-	<Version>6.0.3</Version>
-	<OutputType>Library</OutputType>
-	<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <Version>6.0.3</Version>
+    <OutputType>Library</OutputType>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
