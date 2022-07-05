@@ -2,6 +2,7 @@ using AspNetCore.Environment.Extensions;
 using Microsoft.EntityFrameworkCore;
 using TestMaker.TestService.Infrastructure.Entities;
 using TestMaker.TestService.Infrastructure.Extensions;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args)
     .AddACS();
@@ -9,8 +10,8 @@ var builder = WebApplication.CreateBuilder(args)
 var source = builder.Configuration.GetSection("ACS").Get<AdditionalConfigurationSourceArray>();
 
 // Add services to the container.
-
 builder.Services.AddControllers();
+// Add Cors
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "AllowAll",
@@ -18,14 +19,22 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
+// Add ApplcicationDbContext
 builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
 {
     optionsBuilder.UseSqlServer(builder.Configuration["Mssql:ConnectionString"]);
 });
+// Add Services and repositories
+builder.Services.AddTransientInfrastructure();
 
+// Add ?
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddTransient();
+
+// Add Serilog
+builder.Host.UseSerilog((hostContext, services, configuration) => {
+    configuration.ReadFrom.Configuration(builder.Configuration).WriteTo.Console();
+});
 
 var app = builder.Build();
 

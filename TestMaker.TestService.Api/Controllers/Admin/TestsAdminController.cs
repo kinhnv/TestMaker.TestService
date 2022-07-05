@@ -8,7 +8,7 @@ using TestMaker.TestService.Domain.Models;
 using TestMaker.TestService.Domain.Models.Test;
 using TestMaker.TestService.Domain.Services;
 
-namespace TestMaker.TestService.Api.Admin.Controllers.Admin
+namespace TestMaker.TestService.Api.Controllers.Admin
 {
     [Route("api/Admin/Tests")]
     [ApiController]

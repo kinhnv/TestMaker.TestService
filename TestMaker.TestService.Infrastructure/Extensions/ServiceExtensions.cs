@@ -9,7 +9,7 @@ namespace TestMaker.TestService.Infrastructure.Extensions
 {
     public static class ServiceExtensions
     {
-        public static IServiceCollection AddTransient(this IServiceCollection service)
+        public static IServiceCollection AddTransientInfrastructure(this IServiceCollection service)
         {
             service.AddAutoMapperProfiles();
 
