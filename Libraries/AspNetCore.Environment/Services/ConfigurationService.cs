@@ -29,7 +29,7 @@ namespace AspNetCore.Environment.Services
                         ReloadDelay = additionalConfigurationSource.ReloadDelay
                     });
                 }
-                catch (System.Exception ex)
+                catch (System.Exception)
                 {
                     // log hear
                 }
