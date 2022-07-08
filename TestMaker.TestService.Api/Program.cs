@@ -36,11 +36,7 @@ var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
 // Add Serilog
 builder.Host.UseSerilog((hostContext, services, configuration) => {
-    configuration.ReadFrom.Configuration(builder.Configuration).WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
-    {
-        AutoRegisterTemplate = true,
-        IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name.ToLower().Replace(".", "-")}-{environment.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}"
-    });
+    configuration.ReadFrom.Configuration(builder.Configuration).WriteTo.Console();
 });
 
 // Add Bearer Authentication
