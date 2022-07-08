@@ -12,7 +12,7 @@ namespace TestMaker.Common.Models
         public ApiResult()
         {
             Code = 200;
-            Errors = null;
+            Errors = new List<string>();
         }
 
         public ApiResult(string error)
@@ -61,7 +61,6 @@ namespace TestMaker.Common.Models
         public ApiResult()
             : base()
         {
-            Data = default;
         }
 
         public ApiResult(ServiceResult<T> serviceResult)
@@ -71,7 +70,7 @@ namespace TestMaker.Common.Models
         }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public T Data { get; set; }
+        public T? Data { get; set; }
 
         protected override int GetCodeFromServiceResult(ServiceResult serviceResult)
         {

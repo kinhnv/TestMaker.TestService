@@ -42,7 +42,7 @@ namespace TestMaker.Common.Repository
             return await _dbContext.Set<T>().Where(predicate).CountAsync();
         }
 
-        public async Task<T> GetAsync(Guid id)
+        public async Task<T?> GetAsync(Guid id)
         {
             return await _dbContext.Set<T>().FindAsync(id);
         }

@@ -4,6 +4,8 @@ using Microsoft.IdentityModel.Tokens;
 using TestMaker.TestService.Infrastructure.Entities;
 using TestMaker.TestService.Infrastructure.Extensions;
 using Serilog;
+using Serilog.Sinks.Elasticsearch;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args)
     .AddACS();
@@ -32,11 +34,17 @@ builder.Services.AddTransientInfrastructure();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
 // Add Serilog
 builder.Host.UseSerilog((hostContext, services, configuration) => {
-    configuration.ReadFrom.Configuration(builder.Configuration).WriteTo.Console();
+    configuration.ReadFrom.Configuration(builder.Configuration).WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200"))
+    {
+        AutoRegisterTemplate = true,
+        IndexFormat = $"{Assembly.GetExecutingAssembly().GetName().Name.ToLower().Replace(".", "-")}-{environment.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}"
+    });
 });
-builder.Services.AddTransient();
+
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
