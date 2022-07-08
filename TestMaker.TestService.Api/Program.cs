@@ -8,8 +8,6 @@ using TestMaker.Common.Extensions;
 var builder = WebApplication.CreateBuilder(args)
     .AddACS();
 
-var source = builder.Configuration.GetSection("ACS").Get<AdditionalConfigurationSourceArray>();
-
 // Add services to the container.
 builder.Services.AddControllers();
 // Add Cors
