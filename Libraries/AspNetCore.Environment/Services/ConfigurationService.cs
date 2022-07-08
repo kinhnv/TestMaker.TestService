@@ -18,14 +18,21 @@ namespace AspNetCore.Environment.Services
         {
             if (additionalConfigurationSource.Type == "JsonFile")
             {
-                _configurationBuilder.Sources.Insert(GetIndexOfSource(additionalConfigurationSource), new JsonConfigurationSource
+                try
                 {
-                    FileProvider = new PhysicalFileProvider(additionalConfigurationSource.PhysicalFileProviderRoot),
-                    Path = additionalConfigurationSource.Path,
-                    Optional = additionalConfigurationSource.Optional,
-                    ReloadOnChange = additionalConfigurationSource.ReloadOnChange,
-                    ReloadDelay = additionalConfigurationSource.ReloadDelay
-                });
+                    _configurationBuilder.Sources.Insert(GetIndexOfSource(additionalConfigurationSource), new JsonConfigurationSource
+                    {
+                        FileProvider = new PhysicalFileProvider(additionalConfigurationSource.PhysicalFileProviderRoot),
+                        Path = additionalConfigurationSource.Path,
+                        Optional = additionalConfigurationSource.Optional,
+                        ReloadOnChange = additionalConfigurationSource.ReloadOnChange,
+                        ReloadDelay = additionalConfigurationSource.ReloadDelay
+                    });
+                }
+                catch (System.Exception)
+                {
+                    // log hear
+                }
             }
         }
 

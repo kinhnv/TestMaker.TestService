@@ -39,7 +39,7 @@ namespace TestMaker.Common.Models
         }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public List<string> Errors { get; set; }
+        public List<string>? Errors { get; set; }
 
         public int Code { get; set; }
 

@@ -1,0 +1,1 @@
+dotnet ef migrations add AddQuestionUserTable -s ../TestMaker.TestService.Api/TestMaker.TestService.Api.csproj

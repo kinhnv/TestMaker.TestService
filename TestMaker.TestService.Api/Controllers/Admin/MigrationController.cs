@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TestMaker.TestService.Infrastructure.Entities;
 
 namespace TestMaker.TestService.Api.Controllers.Admin
 {
+    [Authorize]
     [Route("api/Admin/[controller]")]
     [ApiController]
     public class MigrationController : ControllerBase

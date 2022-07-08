@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TestMaker.Common.Models;
 using TestMaker.TestService.Domain.Models.Section;
 using TestMaker.TestService.Domain.Services;
 
 namespace TestMaker.TestService.Api.Controllers.Admin
 {
+    [Authorize]
     [Route("api/Admin/Sections")]
     [ApiController]
     public class SectionsAdminController : ControllerBase

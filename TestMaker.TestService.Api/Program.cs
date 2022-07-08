@@ -1,11 +1,9 @@
 using AspNetCore.Environment.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using TestMaker.TestService.Infrastructure.Entities;
 using TestMaker.TestService.Infrastructure.Extensions;
 using Serilog;
-using Serilog.Sinks.Elasticsearch;
-using System.Reflection;
+using TestMaker.Common.Extensions;
 
 var builder = WebApplication.CreateBuilder(args)
     .AddACS();
@@ -45,17 +43,8 @@ builder.Host.UseSerilog((hostContext, services, configuration) => {
     });
 });
 
-builder.Services.AddAuthentication("Bearer")
-    .AddJwtBearer("Bearer", options =>
-    {
-        options.Authority = "http://localhost:60001";
-
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = false
-        };
-        options.RequireHttpsMetadata = false;
-    });
+// Add Bearer Authentication
+builder.Services.AddBearerAuthentication(builder.Configuration);
 
 var app = builder.Build();
 

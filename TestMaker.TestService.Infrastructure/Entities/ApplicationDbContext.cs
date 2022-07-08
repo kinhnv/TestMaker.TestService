@@ -19,6 +19,8 @@ namespace TestMaker.TestService.Infrastructure.Entities
 
         public DbSet<Question> Questions { get; set; }
 
+        public DbSet<QuestionUser> QuestionUsers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Test>().HasKey(t => t.TestId);
@@ -27,6 +29,11 @@ namespace TestMaker.TestService.Infrastructure.Entities
             modelBuilder.Entity<Section>().Property(s => s.IsDeleted).HasDefaultValue(false);
             modelBuilder.Entity<Question>().HasKey(q => q.QuestionId);
             modelBuilder.Entity<Question>().Property(q => q.IsDeleted).HasDefaultValue(false);
+            modelBuilder.Entity<QuestionUser>().HasKey(x => new {
+                x.QuestionId,
+                x.UserId
+            });
+            modelBuilder.Entity<QuestionUser>().Property(x => x.Rank).HasDefaultValue(0);
         }
     }
 }

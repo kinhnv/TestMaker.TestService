@@ -80,8 +80,10 @@ namespace TestMaker.Common.Repository
         public async Task DeleteAsync(Guid id)
         {
             var entity = await GetAsync(id);
-            entity.IsDeleted = true;
-            _dbContext.Entry(entity).State = EntityState.Modified;
+            if (entity != null) {
+                entity.IsDeleted = true;
+                _dbContext.Entry(entity).State = EntityState.Modified;
+            }
             await _dbContext.SaveChangesAsync();
         }
 
@@ -99,8 +101,10 @@ namespace TestMaker.Common.Repository
         public async Task RestoreAsync(Guid id)
         {
             var entity = await GetAsync(id);
-            entity.IsDeleted = false;
-            _dbContext.Entry(entity).State = EntityState.Modified;
+            if (entity != null) {
+                entity.IsDeleted = false;
+                _dbContext.Entry(entity).State = EntityState.Modified;
+            }
             await _dbContext.SaveChangesAsync();
         }
 
