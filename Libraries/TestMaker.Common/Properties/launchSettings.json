@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "TestMaker.Common": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:58278;http://localhost:58279"
+    }
+  }
+}
