@@ -42,9 +42,13 @@ namespace TestMaker.Common.Repository
             return await _dbContext.Set<T>().Where(predicate).CountAsync();
         }
 
-        public async Task<T?> GetAsync(Guid id)
+        public async Task<T?> GetAsync(Guid id, bool isNoTracked = false)
         {
-            return await _dbContext.Set<T>().FindAsync(id);
+            var entity = await _dbContext.Set<T>().FindAsync(id);
+            if (isNoTracked && entity != null) {
+                _dbContext.Entry(entity).State = EntityState.Detached;
+            }
+            return entity;
         }
 
         public async Task CreateAsync(T entity)
