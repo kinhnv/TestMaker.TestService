@@ -23,12 +23,7 @@ namespace TestMaker.TestService.Api.Controllers
         {
             var result = await _testsService.GetTestsAsync(new GetTestParams());
 
-            if (!result.Successful)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok(result.Data);
+            return Ok(new ApiResult<GetPaginationResult<TestForList>>(result));
         }
 
         [HttpGet]
@@ -37,17 +32,7 @@ namespace TestMaker.TestService.Api.Controllers
         {
             var result = await _testsService.PrepareTestAsync(testId);
 
-            if (result is ServiceNotFoundResult<PreparedTest>)
-            {
-                return NotFound();
-            }
-
-            if (!result.Successful)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok(result.Data);
+            return Ok(new ApiResult<PreparedTest>(result));
         }
 
         [HttpGet]
@@ -56,12 +41,7 @@ namespace TestMaker.TestService.Api.Controllers
         {
             var result = await _testsService.GetCorrectAnswersAsync(testId);
 
-            if (!result.Successful)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok(result.Data);
+            return Ok(new ApiResult<IEnumerable<TestService.Domain.Models.Question.CorrectAnswer>>(result));
         }
     }
 }

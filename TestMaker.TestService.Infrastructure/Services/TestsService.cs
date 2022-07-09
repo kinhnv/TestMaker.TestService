@@ -55,7 +55,7 @@ namespace TestMaker.TestService.Infrastructure.Services
                     Questions = g.Select(x => x.Question)
                 });
 
-            return new ServiceResult<PreparedTest>(new PreparedTest
+            var preparedTest = new PreparedTest
             {
                 TestId = testData.TestId,
                 Name = testData.Name,
@@ -114,7 +114,9 @@ namespace TestMaker.TestService.Infrastructure.Services
                         return result;
                     }).Where(x => x != null)
                 })
-            });
+            };
+
+            return new ServiceResult<PreparedTest>(preparedTest);
         }
 
         public async Task<ServiceResult<IEnumerable<CorrectAnswer>>> GetCorrectAnswersAsync(Guid testId)

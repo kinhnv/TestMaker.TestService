@@ -8,8 +8,6 @@ using TestMaker.Common.Extensions;
 var builder = WebApplication.CreateBuilder(args)
     .AddACS();
 
-var source = builder.Configuration.GetSection("ACS").Get<AdditionalConfigurationSourceArray>();
-
 // Add services to the container.
 builder.Services.AddControllers();
 // Add Cors
@@ -31,6 +29,8 @@ builder.Services.AddTransientInfrastructure();
 // Add ?
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
 // Add Serilog
 builder.Host.UseSerilog((hostContext, services, configuration) => {

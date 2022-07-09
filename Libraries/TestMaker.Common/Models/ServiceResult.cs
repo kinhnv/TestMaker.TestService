@@ -31,6 +31,11 @@ namespace TestMaker.Common.Models
     }
     public class ServiceResult<T> : ServiceResult
     {
+        public ServiceResult()
+            : base() 
+        {
+        }
+
         public ServiceResult(T data)
             : base()
         {
@@ -39,13 +44,11 @@ namespace TestMaker.Common.Models
         public ServiceResult(string error)
             : base(error)
         {
-            Data = default;
         }
 
         public ServiceResult(List<string> errors)
             : base(errors)
         {
-            Data = default;
         }
 
         public T? Data { get; set; }

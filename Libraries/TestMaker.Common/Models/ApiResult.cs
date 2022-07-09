@@ -12,7 +12,7 @@ namespace TestMaker.Common.Models
         public ApiResult()
         {
             Code = 200;
-            Errors = null;
+            Errors = new List<string>();
         }
 
         public ApiResult(string error)
@@ -29,7 +29,7 @@ namespace TestMaker.Common.Models
         {
             if (serviceResult.Errors.Count == 0)
             {
-                Errors = null;
+                Errors = new List<string>();
             }
             else
             {
@@ -39,7 +39,7 @@ namespace TestMaker.Common.Models
         }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public List<string>? Errors { get; set; }
+        public List<string> Errors { get; set; }
 
         public int Code { get; set; }
 
@@ -61,7 +61,6 @@ namespace TestMaker.Common.Models
         public ApiResult()
             : base()
         {
-            Data = default;
         }
 
         public ApiResult(ServiceResult<T> serviceResult)
