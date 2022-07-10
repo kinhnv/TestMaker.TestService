@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TestMaker.Common.Models;
 using TestMaker.TestService.Domain.Models.Test;
@@ -30,7 +31,12 @@ namespace TestMaker.TestService.Api.Controllers
         [Route("PrepareTest")]
         public async Task<ActionResult> PrepareTestAsync(Guid testId)
         {
-            var result = await _testsService.PrepareTestAsync(testId);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
+            var result = await _testsService.PrepareTestAsync(new PrepareTestParams
+            {
+                TestId = testId,
+                UserId = userId != null ? new Guid(userId) : null
+            });
 
             return Ok(new ApiResult<PreparedTest>(result));
         }

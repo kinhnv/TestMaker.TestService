@@ -10,7 +10,7 @@ namespace TestMaker.TestService.Domain.Services
 {
     public interface ITestsService
     {
-        Task<ServiceResult<PreparedTest>> PrepareTestAsync(Guid testId);
+        Task<ServiceResult<PreparedTest>> PrepareTestAsync(PrepareTestParams @params);
 
         Task<ServiceResult<IEnumerable<CorrectAnswer>>> GetCorrectAnswersAsync(Guid testId);
 

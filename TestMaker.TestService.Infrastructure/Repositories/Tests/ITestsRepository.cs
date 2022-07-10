@@ -10,7 +10,7 @@ namespace TestMaker.TestService.Infrastructure.Repositories.Tests
 {
     public interface ITestsRepository: IRepository<Test>
     {
-        Task<GetPrepareTestResult> GetPrepareTestAsync(Guid testId);
+        Task<GetPrepareTestResult> GetPrepareTestAsync(Guid testId, Guid? userId);
 
         Task<List<Question>> GetQuestionsByTestIdAsync(Guid testId);
     }
