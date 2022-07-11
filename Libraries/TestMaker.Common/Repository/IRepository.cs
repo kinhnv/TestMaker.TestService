@@ -19,7 +19,7 @@ namespace TestMaker.Common.Repository
 
         Task<int> CountAsync(Expression<Func<T, bool>> predicate);
 
-        Task<T?> GetAsync(Guid id);
+        Task<T?> GetAsync(Guid id, bool isNoTracked = false);
 
         Task CreateAsync(T entity);
 

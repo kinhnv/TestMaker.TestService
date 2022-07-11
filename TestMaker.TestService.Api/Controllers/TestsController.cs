@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using TestMaker.Common.Models;
 using TestMaker.Common.Mongodb;
@@ -31,31 +32,21 @@ namespace TestMaker.TestService.Api.Controllers
         {
             var result = await _testsService.GetTestsAsync(new GetTestParams());
 
-            if (!result.Successful)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok(result.Data);
+            return Ok(new ApiResult<GetPaginationResult<TestForList>>(result));
         }
 
         [HttpGet]
         [Route("PrepareTest")]
         public async Task<ActionResult> PrepareTestAsync(Guid testId)
         {
-            var result = await _testsService.PrepareTestAsync(testId);
-
-            if (result is ServiceNotFoundResult<PreparedTest>)
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
+            var result = await _testsService.PrepareTestAsync(new PrepareTestParams
             {
-                return NotFound();
-            }
+                TestId = testId,
+                UserId = userId != null ? new Guid(userId) : null
+            });
 
-            if (!result.Successful)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok(result.Data);
+            return Ok(new ApiResult<PreparedTest>(result));
         }
 
         [HttpGet]
@@ -64,12 +55,7 @@ namespace TestMaker.TestService.Api.Controllers
         {
             var result = await _testsService.GetCorrectAnswersAsync(testId);
 
-            if (!result.Successful)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok(result.Data);
+            return Ok(new ApiResult<IEnumerable<TestService.Domain.Models.Question.CorrectAnswer>>(result));
         }
     }
 }

@@ -39,12 +39,12 @@ namespace TestMaker.TestService.Infrastructure.Services
 
         #region Methods
 
-        public async Task<ServiceResult<PreparedTest>> PrepareTestAsync(Guid testId)
+        public async Task<ServiceResult<PreparedTest>> PrepareTestAsync(PrepareTestParams @params)
         {
-            var data = await _testsRepository.GetPrepareTestAsync(testId);
+            var data = await _testsRepository.GetPrepareTestAsync(@params.TestId, @params.UserId);
 
             if (data == null || data.Count == 0)
-                return new ServiceNotFoundResult<PreparedTest>(testId.ToString());
+                return new ServiceNotFoundResult<PreparedTest>(@params.TestId.ToString());
 
             var testData = data.First().Test;
 
@@ -52,10 +52,14 @@ namespace TestMaker.TestService.Infrastructure.Services
                 .Select(g => new
                 {
                     SectionId = g.First().Section.SectionId,
-                    Questions = g.Select(x => x.Question)
+                    Questions = g.Select(x => new
+                    {
+                        QuestionContent = x.Question,
+                        Rank = x.Rank
+                    }),
                 });
 
-            return new ServiceResult<PreparedTest>(new PreparedTest
+            var preparedTest = new PreparedTest
             {
                 TestId = testData.TestId,
                 Name = testData.Name,
@@ -67,46 +71,50 @@ namespace TestMaker.TestService.Infrastructure.Services
                     {
                         PreparedQuestion result = null;
 
-                        switch (question.Type)
+                        switch (question.QuestionContent.Type)
                         {
                             case (int)QuestionType.MultipleChoiceQuestion:
-                                var multipleChoiceQuestion = _mapper.Map<MultipleChoiceQuestion>(question);
+                                var multipleChoiceQuestion = _mapper.Map<MultipleChoiceQuestion>(question.QuestionContent);
                                 result = new PreparedQuestion
                                 {
                                     QuestionId = multipleChoiceQuestion.QuestionId,
                                     Media = multipleChoiceQuestion.Media,
                                     Type = multipleChoiceQuestion.Type,
-                                    QuestionAsJson = multipleChoiceQuestion.QuestionAsJson
+                                    QuestionAsJson = multipleChoiceQuestion.QuestionAsJson,
+                                    Rank = question.Rank
                                 };
                                 break;
                             case (int)QuestionType.BlankFillingQuestion:
-                                var blankFillingQuestion = _mapper.Map<BlankFillingQuestion>(question);
+                                var blankFillingQuestion = _mapper.Map<BlankFillingQuestion>(question.QuestionContent);
                                 result = new PreparedQuestion
                                 {
                                     QuestionId = blankFillingQuestion.QuestionId,
                                     Media = blankFillingQuestion.Media,
                                     Type = blankFillingQuestion.Type,
-                                    QuestionAsJson = blankFillingQuestion.QuestionAsJson
+                                    QuestionAsJson = blankFillingQuestion.QuestionAsJson,
+                                    Rank = question.Rank
                                 };
                                 break;
                             case (int)QuestionType.SortingQuestion:
-                                var sortingQuestion = _mapper.Map<SortingQuestion>(question);
+                                var sortingQuestion = _mapper.Map<SortingQuestion>(question.QuestionContent);
                                 result = new PreparedQuestion
                                 {
                                     QuestionId = sortingQuestion.QuestionId,
                                     Media = sortingQuestion.Media,
                                     Type = sortingQuestion.Type,
-                                    QuestionAsJson = sortingQuestion.QuestionAsJson
+                                    QuestionAsJson = sortingQuestion.QuestionAsJson,
+                                    Rank = question.Rank
                                 };
                                 break;
                             case (int)QuestionType.MatchingQuestion:
-                                var matchingQuestion = _mapper.Map<MatchingQuestion>(question);
+                                var matchingQuestion = _mapper.Map<MatchingQuestion>(question.QuestionContent);
                                 result = new PreparedQuestion
                                 {
                                     QuestionId = matchingQuestion.QuestionId,
                                     Media = matchingQuestion.Media,
                                     Type = matchingQuestion.Type,
-                                    QuestionAsJson = matchingQuestion.QuestionAsJson
+                                    QuestionAsJson = matchingQuestion.QuestionAsJson,
+                                    Rank = question.Rank
                                 };
                                 break;
                         }
@@ -114,7 +122,9 @@ namespace TestMaker.TestService.Infrastructure.Services
                         return result;
                     }).Where(x => x != null)
                 })
-            });
+            };
+
+            return new ServiceResult<PreparedTest>(preparedTest);
         }
 
         public async Task<ServiceResult<IEnumerable<CorrectAnswer>>> GetCorrectAnswersAsync(Guid testId)

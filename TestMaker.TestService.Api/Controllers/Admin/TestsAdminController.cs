@@ -23,7 +23,6 @@ namespace TestMaker.TestService.Api.Controllers.Admin
         [HttpGet]
         public async Task<ActionResult> GetTests()
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
             var role = User.FindFirst(ClaimTypes.Role)?.Value ?? null;
             var result = await _testsService.GetTestsAsync(new GetTestParams());
 

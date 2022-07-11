@@ -11,8 +11,8 @@ namespace TestMaker.TestService.Infrastructure.Entities
         public Guid UserId { get; set; }
         
         public Guid QuestionId { get; set; }
-        
+
         [Required]
-        public int Rank { get; set; }
+        public int Rank { get; set; } = 0;
     }
 }

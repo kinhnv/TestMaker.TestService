@@ -31,6 +31,11 @@ namespace TestMaker.Common.Models
     }
     public class ServiceResult<T> : ServiceResult
     {
+        public ServiceResult()
+            : base() 
+        {
+        }
+
         public ServiceResult(T data)
             : base()
         {
