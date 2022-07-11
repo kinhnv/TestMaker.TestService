@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using TestMaker.Common.Mongodb;
 
 namespace TestMaker.Common.Extensions
 {
@@ -19,6 +20,16 @@ namespace TestMaker.Common.Extensions
                     };
                     options.RequireHttpsMetadata = false;
                 });
+            return service;
+        }
+
+        public static IServiceCollection AddMongoContext(this IServiceCollection service, string connectionString)
+        {
+            service.AddSingleton<IMongoContext, MongoContext>(x =>
+            {
+                return new MongoContext(new MongoDbSettings(connectionString));
+            });
+
             return service;
         }
     }

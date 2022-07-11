@@ -9,22 +9,15 @@ using TestMaker.TestService.Domain.Services;
 
 namespace TestMaker.TestService.Api.Controllers
 {
-    public class MongoTest : MongoEntity
-    {
-        public override string Type => "MongoTest";
-    }
-
     [Route("api/[controller]")]
     [ApiController]
     public class TestsController : ControllerBase
     {
         private readonly ITestsService _testsService;
-        private readonly MongoRepository<MongoTest> _mongoRepository;
 
-        public TestsController(ITestsService testsService, Common.Mongodb.MongoRepository<MongoTest> mongoRepository)
+        public TestsController(ITestsService testsService)
         {
             _testsService = testsService;
-            _mongoRepository = mongoRepository;
         }
 
         [HttpGet]

@@ -1,11 +1,28 @@
 ﻿namespace TestMaker.Common.Mongodb
 {
-    public class MongoDbSettings : IMongoDbSettings
+    public class MongoDbSettings
     {
-        public string CollectionName { get; set; } = "MainCollection";
+        private readonly string _connectionString;
 
-        public string ConnectionString { get; set; } = string.Empty;
+        public MongoDbSettings(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
 
-        public string DatabaseName { get; set; } = "MainCollection";
+        public string Source
+        {
+            get
+            {
+                var server = _connectionString.Split(";").Single(x => x.Trim().StartsWith("Data Source")).Split("=").Last();
+                return $"mongodb://{server}:27017";
+            }
+        }
+        public string DatabaseName
+        {
+            get
+            {
+                return _connectionString.Split(";").Single(x => x.Trim().StartsWith("database")).Split("=").Last();
+            }
+        }
     }
 }
