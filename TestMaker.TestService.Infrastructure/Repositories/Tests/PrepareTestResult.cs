@@ -11,7 +11,7 @@ namespace TestMaker.TestService.Infrastructure.Repositories.Tests
 
         public Question Question { get; set; }
 
-        public int Rank { get; set; }
+        public double Rank { get; set; }
     }
 
     public class GetPrepareTestResult: List<GetPrepareTestResultItem>

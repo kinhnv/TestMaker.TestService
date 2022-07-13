@@ -58,8 +58,11 @@ namespace TestMaker.TestService.Api.Controllers
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
             if (userId != null)
             {
-
+                var result = await _testsService.SaveUserAnswers(new Guid(userId), userAnswers);
+                return Ok(new ApiResult(result));
             }
+
+            return Ok(new ApiResult());
         }
     }
 }

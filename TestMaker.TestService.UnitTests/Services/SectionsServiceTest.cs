@@ -23,7 +23,7 @@ namespace SectionMaker.Business.UnitSections.Services
         #region Fields
         private readonly IMapper _mapper;
         private readonly Mock<ISectionsRepository> _mockSectionsRepository;
-        private readonly Mock<IUserQuestionsRepository> _mockQuestionsRepository;
+        private readonly Mock<IQuestionsRepository> _mockQuestionsRepository;
 
         private readonly Section _section;
         private readonly SectionForCreating _sectionForCreating;
@@ -38,7 +38,7 @@ namespace SectionMaker.Business.UnitSections.Services
                 cfg.AddProfile(new AutoMapperProfile());
             }).CreateMapper();
             _mockSectionsRepository = new Mock<ISectionsRepository>();
-            _mockQuestionsRepository = new Mock<IUserQuestionsRepository>();
+            _mockQuestionsRepository = new Mock<IQuestionsRepository>();
 
             _section = new()
             {
