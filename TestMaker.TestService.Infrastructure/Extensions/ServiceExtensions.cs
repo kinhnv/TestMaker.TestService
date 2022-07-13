@@ -16,7 +16,7 @@ namespace TestMaker.TestService.Infrastructure.Extensions
             // Repositories
             service.AddTransient<ITestsRepository, TestsRepository>();
             service.AddTransient<ISectionsRepository, SectionsRepository>();
-            service.AddTransient<IQuestionsRepository, QuestionsRepository>();
+            service.AddTransient<IUserQuestionsRepository, UserQuestionsRepository>();
 
             service.AddTransient<ITestsService, TestsService>();
             service.AddTransient<ISectionsService, SectionsService>();

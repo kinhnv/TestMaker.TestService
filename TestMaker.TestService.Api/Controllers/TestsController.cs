@@ -50,5 +50,16 @@ namespace TestMaker.TestService.Api.Controllers
 
             return Ok(new ApiResult<IEnumerable<TestService.Domain.Models.Question.CorrectAnswer>>(result));
         }
+
+        [HttpPost]
+        [Route("SaveAnswers")]
+        public async Task<IActionResult> SaveAnswersAsync(List<UserAnswer> userAnswers)
+        {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
+            if (userId != null)
+            {
+
+            }
+        }
     }
 }

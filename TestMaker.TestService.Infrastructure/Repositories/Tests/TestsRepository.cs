@@ -17,7 +17,7 @@ namespace TestMaker.TestService.Infrastructure.Repositories.Tests
 
         public async Task<GetPrepareTestResult> GetPrepareTestAsync(Guid testId, Guid? userId)
         {
-            var questionUserAsQueryable = _dbContext.Set<QuestionUser>().AsQueryable();
+            var questionUserAsQueryable = _dbContext.Set<UserQuestion>().AsQueryable();
 
 
             var data =

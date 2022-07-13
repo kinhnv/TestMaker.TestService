@@ -17,12 +17,12 @@ namespace TestMaker.TestService.Infrastructure.Services
     public class SectionsService : ISectionsService
     {
         private readonly ISectionsRepository _sectionsRepository;
-        private readonly IQuestionsRepository _questionsRepository;
+        private readonly IUserQuestionsRepository _questionsRepository;
         private readonly IMapper _mapper;
 
         public SectionsService(
             ISectionsRepository sectionsRepository, 
-            IQuestionsRepository questionsRepository, 
+            IUserQuestionsRepository questionsRepository, 
             IMapper mapper)
         {
             _sectionsRepository = sectionsRepository;

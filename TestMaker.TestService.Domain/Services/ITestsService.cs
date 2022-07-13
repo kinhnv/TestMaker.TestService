@@ -14,6 +14,8 @@ namespace TestMaker.TestService.Domain.Services
 
         Task<ServiceResult<IEnumerable<CorrectAnswer>>> GetCorrectAnswersAsync(Guid testId);
 
+        Task<ServiceResult> SaveUserAnswers(Guid userId, IEnumerable<UserAnswer> userAnswers);
+
         Task<ServiceResult<GetPaginationResult<TestForList>>> GetTestsAsync(GetTestParams getTestParams);
 
         Task<ServiceResult<TestForDetails>> GetTestAsync(Guid testId);
