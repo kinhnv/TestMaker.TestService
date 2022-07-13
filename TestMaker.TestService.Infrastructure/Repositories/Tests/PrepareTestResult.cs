@@ -10,6 +10,8 @@ namespace TestMaker.TestService.Infrastructure.Repositories.Tests
         public Section Section { get; set; }
 
         public Question Question { get; set; }
+
+        public double Rank { get; set; }
     }
 
     public class GetPrepareTestResult: List<GetPrepareTestResultItem>

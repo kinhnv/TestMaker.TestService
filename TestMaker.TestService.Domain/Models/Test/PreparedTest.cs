@@ -24,6 +24,9 @@ namespace TestMaker.TestService.Domain.Models.Test
 
                 [JsonProperty("questionAsJson")]
                 public string QuestionAsJson { get; set; }
+
+                [JsonProperty("rank")]
+                public double Rank { get; set; }
             }
 
             public Guid SectionId { get; set; }

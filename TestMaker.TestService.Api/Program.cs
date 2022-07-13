@@ -23,6 +23,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(optionsBuilder =>
 {
     optionsBuilder.UseSqlServer(builder.Configuration["Mssql:ConnectionString"]);
 });
+// Add MongoContext
+builder.Services.AddMongoContext(builder.Configuration["Mongodb:ConnectionString"]);
 // Add Services and repositories
 builder.Services.AddTransientInfrastructure();
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TestMaker.Common.Mongodb;
 
 namespace TestMaker.TestService.Api.Controllers
 {
@@ -9,7 +10,6 @@ namespace TestMaker.TestService.Api.Controllers
     {
         public HealthController()
         {
-
         }
 
         [HttpGet]

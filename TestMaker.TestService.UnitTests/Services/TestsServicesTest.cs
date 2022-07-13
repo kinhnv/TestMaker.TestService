@@ -11,8 +11,10 @@ using TestMaker.TestService.Domain.Models.Test;
 using TestMaker.TestService.Domain.Services;
 using TestMaker.TestService.Infrastructure.Entities;
 using TestMaker.TestService.Infrastructure.Extensions;
+using TestMaker.TestService.Infrastructure.Repositories.Questions;
 using TestMaker.TestService.Infrastructure.Repositories.Sections;
 using TestMaker.TestService.Infrastructure.Repositories.Tests;
+using TestMaker.TestService.Infrastructure.Repositories.UserQuestions;
 using TestMaker.TestService.Infrastructure.Services;
 using Xunit;
 
@@ -24,6 +26,8 @@ namespace TestMaker.Business.Admin.UnitTests.Services
         private readonly IMapper _mapper;
         private readonly Mock<ITestsRepository> _mockTestsRepository;
         private readonly Mock<ISectionsRepository> _mockSectionsRepository;
+        private readonly Mock<IQuestionsRepository> _mockQuestionsRepository;
+        private readonly Mock<IUserQuestionsRepository> _mockUserQuestionsRepository;
 
         private readonly Test _test;
         private readonly TestForCreating _testForCreating;
@@ -39,6 +43,8 @@ namespace TestMaker.Business.Admin.UnitTests.Services
             }).CreateMapper();
             _mockTestsRepository = new Mock<ITestsRepository>();
             _mockSectionsRepository = new Mock<ISectionsRepository>();
+            _mockQuestionsRepository = new Mock<IQuestionsRepository>();
+            _mockUserQuestionsRepository = new Mock<IUserQuestionsRepository>();
 
             _test = new()
             {
@@ -270,7 +276,7 @@ namespace TestMaker.Business.Admin.UnitTests.Services
         {
             _mockTestsRepository.Reset();
             setup();
-            return new TestsService(_mockTestsRepository.Object, _mockSectionsRepository.Object, _mapper);
+            return new TestsService(_mapper, _mockTestsRepository.Object, _mockSectionsRepository.Object, _mockQuestionsRepository.Object, _mockUserQuestionsRepository.Object);
         }
         #endregion
     }

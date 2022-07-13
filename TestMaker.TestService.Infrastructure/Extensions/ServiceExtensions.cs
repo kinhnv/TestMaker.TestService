@@ -3,6 +3,7 @@ using TestMaker.TestService.Domain.Services;
 using TestMaker.TestService.Infrastructure.Repositories.Questions;
 using TestMaker.TestService.Infrastructure.Repositories.Sections;
 using TestMaker.TestService.Infrastructure.Repositories.Tests;
+using TestMaker.TestService.Infrastructure.Repositories.UserQuestions;
 using TestMaker.TestService.Infrastructure.Services;
 
 namespace TestMaker.TestService.Infrastructure.Extensions
@@ -17,6 +18,7 @@ namespace TestMaker.TestService.Infrastructure.Extensions
             service.AddTransient<ITestsRepository, TestsRepository>();
             service.AddTransient<ISectionsRepository, SectionsRepository>();
             service.AddTransient<IQuestionsRepository, QuestionsRepository>();
+            service.AddTransient<IUserQuestionsRepository, UserQuestionsRepository>();
 
             service.AddTransient<ITestsService, TestsService>();
             service.AddTransient<ISectionsService, SectionsService>();
