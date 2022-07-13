@@ -17,10 +17,10 @@ namespace TestMaker.TestService.Infrastructure.Services
 {
     public class QuestionsService : IQuestionsService
     {
-        private readonly IQuestionsRepository _questionsRepository;
+        private readonly IUserQuestionsRepository _questionsRepository;
         private readonly IMapper _mapper;
 
-        public QuestionsService(IQuestionsRepository questionsRepository, IMapper mapper)
+        public QuestionsService(IUserQuestionsRepository questionsRepository, IMapper mapper)
         {
             _questionsRepository = questionsRepository;
             _mapper = mapper;
