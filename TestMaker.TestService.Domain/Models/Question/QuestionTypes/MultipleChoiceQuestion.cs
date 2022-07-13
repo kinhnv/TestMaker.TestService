@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TestMaker.TestService.Domain.Extensions;
+using TestMaker.Common.Extensions;
 
 namespace TestMaker.TestService.Domain.Models.Question.QuestionTypes
 {
@@ -84,7 +84,7 @@ namespace TestMaker.TestService.Domain.Models.Question.QuestionTypes
                 {
                     Question = Content.Question,
                     IsSingleChoice = Content.Answers.Count(x => x.IsCorrect) == 1,
-                    Answers = Content.Answers.RandomPosition().Select(a => a.Answer).ToList()
+                    Answers = Content.Answers.OrderRandom().Select(a => a.Answer).ToList()
                 });
             }
         }

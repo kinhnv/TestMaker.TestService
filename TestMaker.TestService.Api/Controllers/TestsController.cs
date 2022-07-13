@@ -2,6 +2,7 @@
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using TestMaker.Common.Extensions;
 using TestMaker.Common.Models;
 using TestMaker.Common.Mongodb;
 using TestMaker.TestService.Domain.Models.Test;
@@ -32,11 +33,10 @@ namespace TestMaker.TestService.Api.Controllers
         [Route("PrepareTest")]
         public async Task<ActionResult> PrepareTestAsync(Guid testId)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
             var result = await _testsService.PrepareTestAsync(new PrepareTestParams
             {
                 TestId = testId,
-                UserId = userId != null ? new Guid(userId) : null
+                UserId = User.GetUserId()
             });
 
             return Ok(new ApiResult<PreparedTest>(result));
@@ -55,10 +55,10 @@ namespace TestMaker.TestService.Api.Controllers
         [Route("SaveAnswers")]
         public async Task<IActionResult> SaveAnswersAsync(List<UserAnswer> userAnswers)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? null;
+            var userId = User.GetUserId();
             if (userId != null)
             {
-                var result = await _testsService.SaveUserAnswers(new Guid(userId), userAnswers);
+                var result = await _testsService.SaveUserAnswers((Guid)userId, userAnswers);
                 return Ok(new ApiResult(result));
             }
 

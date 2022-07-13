@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TestMaker.TestService.Domain.Extensions;
+using TestMaker.Common.Extensions;
 
 namespace TestMaker.TestService.Domain.Models.Question.QuestionTypes
 {
@@ -80,7 +80,7 @@ namespace TestMaker.TestService.Domain.Models.Question.QuestionTypes
                 return JsonConvert.SerializeObject(new SortingQuestionContentResult
                 {
                     Question = Content.Question,
-                    Answers = Content.Answers.RandomPosition().Select(x => x.Answer).ToList()
+                    Answers = Content.Answers.OrderRandom().Select(x => x.Answer).ToList()
                 }); ;
             }
         }

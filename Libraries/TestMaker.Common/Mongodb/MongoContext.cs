@@ -6,7 +6,7 @@ namespace TestMaker.Common.Mongodb
     {
         public MongoContext(MongoDbSettings settings)
         {
-            var client = new MongoClient(settings.Source);
+            var client = new MongoClient(settings.ConnectionString);
             Database = client.GetDatabase(settings.DatabaseName);
         }
 

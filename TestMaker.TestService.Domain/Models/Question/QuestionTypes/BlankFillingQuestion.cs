@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using TestMaker.TestService.Domain.Extensions;
+using TestMaker.Common.Extensions;
 
 namespace TestMaker.TestService.Domain.Models.Question.QuestionTypes
 {
@@ -154,7 +154,7 @@ namespace TestMaker.TestService.Domain.Models.Question.QuestionTypes
                     contentBlanks = Content.Blanks.Select(a => new BlankFillingQuestionContentBlankResult
                     {
                         Position = a.Position,
-                        Answers = a.Answer.Split(",").RandomPosition()
+                        Answers = a.Answer.Split(",").OrderRandom()
                     }).ToList();
                 }
                 else
@@ -164,7 +164,7 @@ namespace TestMaker.TestService.Domain.Models.Question.QuestionTypes
                         contentBlanks.Add(new BlankFillingQuestionContentBlankResult
                         {
                             Position = blank.Value.Substring(0, blank.Length - 1),
-                            Answers = correctAnswers.RandomPosition()
+                            Answers = correctAnswers.OrderRandom()
                         });
                     }
                 }

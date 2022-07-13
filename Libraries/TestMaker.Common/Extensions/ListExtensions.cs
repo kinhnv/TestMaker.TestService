@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestMaker.TestService.Domain.Extensions
+namespace TestMaker.Common.Extensions
 {
     public static class ListExtensions
     {
-        public static IEnumerable<T> RandomPosition<T>(this IEnumerable<T> enumrable)
+        public static IEnumerable<T> OrderRandom<T>(this IEnumerable<T> enumrable)
         {
             return enumrable.Select(x => new
             {
