@@ -11,14 +11,14 @@ namespace AspNetCore.Environment.Configuration
         public AdditionalConfigurationSource()
         {
             Type = string.Empty;
-            FullPath = string.Empty;
+            Path = string.Empty;
             Optional = true;
             ReloadOnChange = true;
             ReloadDelay = 250;
         }
         public string Type { get; set; }
 
-        public string FullPath { get; set; }
+        public string Path { get; set; }
 
         public bool Optional { get; set; }
 
@@ -30,21 +30,35 @@ namespace AspNetCore.Environment.Configuration
         {
             get
             {
-                if (string.IsNullOrEmpty(FullPath))
-                    return string.Empty;
-                var index = FullPath.LastIndexOf('/');
-                return FullPath.Substring(0, index);
+                if (Path.Contains('/'))
+                {
+                    if (string.IsNullOrEmpty(Path))
+                        return string.Empty;
+                    var index = Path.LastIndexOf('/');
+                    return Path.Substring(0, index);
+                }
+                else
+                {
+                    return Directory.GetCurrentDirectory();
+                }
             }
         }
 
-        public string Path
+        public string FilePath
         {
             get
             {
-                if (string.IsNullOrEmpty(FullPath))
-                    return string.Empty;
-                var index = FullPath.LastIndexOf('/') + 1;
-                return FullPath.Substring(index);
+                if (Path.Contains('/'))
+                {
+                    if (string.IsNullOrEmpty(Path))
+                        return string.Empty;
+                    var index = Path.LastIndexOf('/') + 1;
+                    return Path.Substring(index);
+                }
+                else
+                {
+                    return Path;
+                }
             }
         }
     }

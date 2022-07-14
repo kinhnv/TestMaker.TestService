@@ -23,7 +23,7 @@ namespace AspNetCore.Environment.Services
                     _configurationBuilder.Sources.Insert(GetIndexOfSource(additionalConfigurationSource), new JsonConfigurationSource
                     {
                         FileProvider = new PhysicalFileProvider(additionalConfigurationSource.PhysicalFileProviderRoot),
-                        Path = additionalConfigurationSource.Path,
+                        Path = additionalConfigurationSource.FilePath,
                         Optional = additionalConfigurationSource.Optional,
                         ReloadOnChange = additionalConfigurationSource.ReloadOnChange,
                         ReloadDelay = additionalConfigurationSource.ReloadDelay
