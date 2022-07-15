@@ -2,6 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using TestMaker.Common.Mongodb;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace TestMaker.Common.Extensions
 {
@@ -9,11 +10,10 @@ namespace TestMaker.Common.Extensions
     {
         public static IServiceCollection AddBearerAuthentication(this IServiceCollection service, ConfigurationManager configuration)
         {
-            service.AddAuthentication("Bearer")
+            service.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer("Bearer", options =>
                 {
                     options.Authority = configuration["Server:IdentityServer"];
-
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateAudience = false
