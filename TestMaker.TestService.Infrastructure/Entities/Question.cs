@@ -16,10 +16,6 @@ namespace TestMaker.TestService.Infrastructure.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid QuestionId { get; set; }
 
-        [Required]
-        [StringLength(64)]
-        public string Name { get; set; }
-
         public string Media { get; set; }
 
         public int Type { get; set; }
