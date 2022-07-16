@@ -10,10 +10,6 @@ namespace TestMaker.TestService.Domain.Models.Question
 {
     public class QuestionForCreating
     {
-        [Required]
-        [StringLength(64)]
-        public string Name { get; set; }
-
         public int Type { get; set; }
 
         public string Media { get; set; }

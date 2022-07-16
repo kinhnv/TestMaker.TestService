@@ -249,7 +249,7 @@ namespace TestMaker.TestService.Infrastructure.Services
         {
             Expression<Func<Test, bool>> predicate = x => x.IsDeleted == getTestParams.IsDeleted;
 
-            var result = (await _testsRepository.GetAsync(predicate, getTestParams.Skip, getTestParams.Page))
+            var result = (await _testsRepository.GetAsync(predicate, getTestParams.Skip, getTestParams.Take))
                 .Select(test => _mapper.Map<TestForList>(test));
 
             return new ServiceResult<GetPaginationResult<TestForList>>(new GetPaginationResult<TestForList>

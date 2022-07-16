@@ -60,8 +60,8 @@ namespace TestMaker.TestService.Infrastructure.Services
         {
             var entity = _mapper.Map<Section>(section);
 
-            var result = await _sectionsRepository.GetAsync(section.SectionId);
-            if (result == null || result.IsDeleted == true)
+            var count = await _sectionsRepository.CountAsync(x => x.SectionId == section.SectionId);
+            if (count <= 0)
             {
                 return new ServiceNotFoundResult<SectionForDetails>(section.SectionId.ToString());
             }

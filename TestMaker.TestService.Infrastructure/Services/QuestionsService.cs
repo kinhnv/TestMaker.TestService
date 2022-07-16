@@ -9,6 +9,7 @@ using TestMaker.Common.Models;
 using TestMaker.TestService.Domain.Models;
 using TestMaker.TestService.Domain.Models.Quersion;
 using TestMaker.TestService.Domain.Models.Question;
+using TestMaker.TestService.Domain.Models.Question.QuestionTypes;
 using TestMaker.TestService.Domain.Services;
 using TestMaker.TestService.Infrastructure.Entities;
 using TestMaker.TestService.Infrastructure.Repositories.Questions;
@@ -50,7 +51,7 @@ namespace TestMaker.TestService.Infrastructure.Services
         {
             var entity = _mapper.Map<Question>(question);
 
-            var result = await _questionsRepository.GetAsync(question.QuestionId);
+            var result = await _questionsRepository.GetAsync(question.QuestionId, true);
             if (result == null || result.IsDeleted == true)
             {
                 return new ServiceNotFoundResult<QuestionForDetails>(question.QuestionId.ToString());
@@ -72,15 +73,43 @@ namespace TestMaker.TestService.Infrastructure.Services
 
         public async Task<ServiceResult<GetPaginationResult<QuestionForList>>> GetQuestionsAsync(GetQuestionsParams getQuestionsParams)
         {
+            getQuestionsParams.Take = 100;
             Expression<Func<Question, bool>> predicate = x => x.IsDeleted == getQuestionsParams.IsDeleted &&
                 (getQuestionsParams.SectionId == null || getQuestionsParams.SectionId == x.SectionId);
 
-            var quetsions = (await _questionsRepository.GetAsync(predicate, getQuestionsParams.Skip, getQuestionsParams.Take))
-                .Select(section => _mapper.Map<QuestionForList>(section));
+            var questions = (await _questionsRepository.GetAsync(predicate, getQuestionsParams.Skip, getQuestionsParams.Take))
+                .Select(question =>
+                {
+                    var questionForList =  _mapper.Map<QuestionForList>(question);
+                    switch (question.Type)
+                        {
+                            case (int)QuestionType.MultipleChoiceQuestion:
+                                var multipleChoiceQuestion = _mapper.Map<MultipleChoiceQuestion>(question);
+                                questionForList.Name = multipleChoiceQuestion.Content.Question;
+                                break;
+                            case (int)QuestionType.BlankFillingQuestion:
+                                var blankFillingQuestion = _mapper.Map<BlankFillingQuestion>(question);
+                                questionForList.Name = blankFillingQuestion.Content.Question;
+                                break;
+                            case (int)QuestionType.SortingQuestion:
+                                var sortingQuestion = _mapper.Map<SortingQuestion>(question);
+                                questionForList.Name = sortingQuestion.Content.Question;
+                                break;
+                            case (int)QuestionType.MatchingQuestion:
+                                var matchingQuestion = _mapper.Map<MatchingQuestion>(question);
+                                questionForList.Name = matchingQuestion.Content.Question;
+                                break;
+                            default:
+                                break;
+                        }
+                    return questionForList;
+                });
+
             var count = await _questionsRepository.CountAsync(predicate);
+
             var result = new GetPaginationResult<QuestionForList>
             {
-                Data = quetsions.ToList(),
+                Data = questions.ToList(),
                 Page = getQuestionsParams.Page,
                 Take = getQuestionsParams.Take,
                 TotalPage = count
