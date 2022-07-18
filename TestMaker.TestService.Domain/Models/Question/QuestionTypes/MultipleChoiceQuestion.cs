@@ -71,7 +71,7 @@ namespace TestMaker.TestService.Domain.Models.Question.QuestionTypes
         {
             get
             {
-                return JsonConvert.SerializeObject(Content.Answers.Where(a => a.IsCorrect).Select(a => a.Answer));
+                return JsonConvert.SerializeObject(Content.Answers.Where(a => a.IsCorrect).Select(a => a.Answer).OrderBy(x => x));
             }
         }
 
