@@ -11,5 +11,7 @@ namespace TestMaker.TestService.Domain.Models.Question
         public Guid QuestionId { get; set; }
 
         public string AnswerAsJson { get; set; }
+
+        public string RationalesAsJson { get; set; }
     }
 }
