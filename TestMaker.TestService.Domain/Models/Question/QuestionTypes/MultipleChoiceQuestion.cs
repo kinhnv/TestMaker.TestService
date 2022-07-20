@@ -6,6 +6,15 @@ using TestMaker.Common.Extensions;
 
 namespace TestMaker.TestService.Domain.Models.Question.QuestionTypes
 {
+    class MultipleChoiceQuestionContentRationale
+    {
+        [JsonProperty("answer")]
+        public string Answer { get; set; }
+
+        [JsonProperty("rationale")]
+        public string Rationale { get; set; }
+    }
+
     class MultipleChoiceQuestionContentResult
     {
         [JsonProperty("question")]
@@ -25,6 +34,9 @@ namespace TestMaker.TestService.Domain.Models.Question.QuestionTypes
 
         [JsonProperty("isCorrect")]
         public bool IsCorrect { get; set; }
+
+        [JsonProperty("rationale")]
+        public string Rationale { get; set; }
     }
 
     public class MultipleChoiceQuestionContent
@@ -71,7 +83,7 @@ namespace TestMaker.TestService.Domain.Models.Question.QuestionTypes
         {
             get
             {
-                return JsonConvert.SerializeObject(Content.Answers.Where(a => a.IsCorrect).Select(a => a.Answer));
+                return JsonConvert.SerializeObject(Content.Answers.Where(a => a.IsCorrect).Select(a => a.Answer).OrderBy(x => x));
             }
         }
 
@@ -86,6 +98,18 @@ namespace TestMaker.TestService.Domain.Models.Question.QuestionTypes
                     IsSingleChoice = Content.Answers.Count(x => x.IsCorrect) == 1,
                     Answers = Content.Answers.OrderRandom().Select(a => a.Answer).ToList()
                 });
+            }
+        }
+
+        public string RationalesAsJson
+        {
+            get
+            {
+                return JsonConvert.SerializeObject(Content.Answers.Select(x => new MultipleChoiceQuestionContentRationale
+                {
+                    Answer = x.Answer,
+                    Rationale = x.Rationale
+                }));
             }
         }
     }

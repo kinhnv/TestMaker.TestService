@@ -141,12 +141,14 @@ namespace TestMaker.TestService.Infrastructure.Services
             return new ServiceResult<IEnumerable<CorrectAnswer>>(questions.Select(question =>
             {
                 var answerAsJson = string.Empty;
+                var rationalesAsJson = string.Empty;
 
                 switch (question.Type)
                 {
                     case (int)QuestionType.MultipleChoiceQuestion:
                         var multipleChoiceQuestion = _mapper.Map<MultipleChoiceQuestion>(question);
                         answerAsJson = multipleChoiceQuestion.AnswerAsJson;
+                        rationalesAsJson = multipleChoiceQuestion.AnswerAsJson;
                         break;
                     case (int)QuestionType.BlankFillingQuestion:
                         var blankFillingQuestion = _mapper.Map<BlankFillingQuestion>(question);
@@ -165,9 +167,52 @@ namespace TestMaker.TestService.Infrastructure.Services
                 return new CorrectAnswer
                 {
                     QuestionId = question.QuestionId,
-                    AnswerAsJson = answerAsJson
+                    AnswerAsJson = answerAsJson,
+                    RationalesAsJson = rationalesAsJson
                 };
             }));
+        }
+
+        public async Task<ServiceResult<CorrectAnswer>> GetCorrectAnswerAsync(Guid questionId)
+        {
+            var question = await _questionsRepository.GetAsync(questionId);
+
+            if (question == null)
+            {
+                return new ServiceNotFoundResult<CorrectAnswer>(questionId);
+            }
+
+            var answerAsJson = string.Empty;
+            var rationalesAsJson = string.Empty;
+
+            switch (question.Type)
+            {
+                case (int)QuestionType.MultipleChoiceQuestion:
+                    var multipleChoiceQuestion = _mapper.Map<MultipleChoiceQuestion>(question);
+                    answerAsJson = multipleChoiceQuestion.AnswerAsJson;
+                    rationalesAsJson = multipleChoiceQuestion.RationalesAsJson;
+                    break;
+                case (int)QuestionType.BlankFillingQuestion:
+                    var blankFillingQuestion = _mapper.Map<BlankFillingQuestion>(question);
+                    answerAsJson = blankFillingQuestion.AnswerAsJson;
+                    break;
+                case (int)QuestionType.SortingQuestion:
+                    var sortingQuestion = _mapper.Map<SortingQuestion>(question);
+                    answerAsJson = sortingQuestion.AnswerAsJson;
+                    break;
+                case (int)QuestionType.MatchingQuestion:
+                    var matchingQuestion = _mapper.Map<MatchingQuestion>(question);
+                    answerAsJson = matchingQuestion.AnswerAsJson;
+                    break;
+            }
+
+
+            return new ServiceResult<CorrectAnswer>(new CorrectAnswer
+            {
+                QuestionId = question.QuestionId,
+                AnswerAsJson = answerAsJson,
+                RationalesAsJson = rationalesAsJson
+            });
         }
 
         public async Task<ServiceResult> SaveUserAnswers(Guid userId, IEnumerable<UserAnswer> userAnswers)

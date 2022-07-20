@@ -41,6 +41,14 @@ namespace TestMaker.TestService.Api.Controllers
 
             return Ok(new ApiResult<PreparedTest>(result));
         }
+        [HttpGet]
+        [Route("GetCorrectAnswer")]
+        public async Task<IActionResult> GetCorrectAnswerAsync(Guid questionId)
+        {
+            var result = await _testsService.GetCorrectAnswerAsync(questionId);
+
+            return Ok(new ApiResult<TestService.Domain.Models.Question.CorrectAnswer>(result));
+        }
 
         [HttpGet]
         [Route("GetCorrectAnswers")]
@@ -59,6 +67,20 @@ namespace TestMaker.TestService.Api.Controllers
             if (userId != null)
             {
                 var result = await _testsService.SaveUserAnswers((Guid)userId, userAnswers);
+                return Ok(new ApiResult(result));
+            }
+
+            return Ok(new ApiResult());
+        }
+
+        [HttpPost]
+        [Route("SaveAnswer")]
+        public async Task<IActionResult> SaveAnswerAsync(string answerAsJson, Guid questionId)
+        {
+            var userId = User.GetUserId();
+            if (userId != null)
+            {
+                var result = await _testsService.SaveUserAnswers((Guid)userId, new List<UserAnswer> { new UserAnswer { QuestionId = questionId, AnswerAsJson = answerAsJson } });
                 return Ok(new ApiResult(result));
             }
 
