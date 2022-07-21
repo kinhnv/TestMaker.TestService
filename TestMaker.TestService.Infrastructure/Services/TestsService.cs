@@ -59,6 +59,7 @@ namespace TestMaker.TestService.Infrastructure.Services
                 .Select(g => new
                 {
                     SectionId = g.First().Section.SectionId,
+                    Name = g.First().Section.Name,
                     Questions = g.Select(x => new
                     {
                         QuestionContent = x.Question,
@@ -74,6 +75,7 @@ namespace TestMaker.TestService.Infrastructure.Services
                 Sections = sections.Select(s => new PreparedSection
                 {
                     SectionId = s.SectionId,
+                    Name = s.Name,
                     Questions = s.Questions.Select(question =>
                     {
                         PreparedQuestion result = null;
@@ -335,7 +337,7 @@ namespace TestMaker.TestService.Infrastructure.Services
         public async Task<ServiceResult<TestForDetails>> EditTestAsync(TestForEditing test)
         {
             var entity = _mapper.Map<Test>(test);
-            var result = await _testsRepository.GetAsync(test.TestId);
+            var result = await _testsRepository.GetAsync(test.TestId, isNoTracked: true);
             if (result == null || result.IsDeleted == true)
             {
                 return new ServiceNotFoundResult<TestForDetails>(test.TestId.ToString());
