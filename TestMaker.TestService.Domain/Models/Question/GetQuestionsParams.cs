@@ -10,5 +10,7 @@ namespace TestMaker.TestService.Domain.Models.Quersion
     public class GetQuestionsParams : GetPaginationParams
     {
         public Guid? SectionId { get; set; } = null;
+
+        public string Content { get; set; } = string.Empty;
     }
 }

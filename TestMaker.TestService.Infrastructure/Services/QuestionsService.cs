@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using System.Web;
 using TestMaker.Common.Models;
 using TestMaker.TestService.Domain.Models;
 using TestMaker.TestService.Domain.Models.Quersion;
@@ -73,9 +74,9 @@ namespace TestMaker.TestService.Infrastructure.Services
 
         public async Task<ServiceResult<GetPaginationResult<QuestionForList>>> GetQuestionsAsync(GetQuestionsParams getQuestionsParams)
         {
-            getQuestionsParams.Take = 100;
             Expression<Func<Question, bool>> predicate = x => x.IsDeleted == getQuestionsParams.IsDeleted &&
-                (getQuestionsParams.SectionId == null || getQuestionsParams.SectionId == x.SectionId);
+                (getQuestionsParams.SectionId == null || getQuestionsParams.SectionId == x.SectionId) &&
+                (getQuestionsParams.Content == string.Empty || x.ContentAsJson.Contains(getQuestionsParams.Content) || x.ContentAsJson.Contains(HttpUtility.HtmlEncode(getQuestionsParams.Content)));
 
             var questions = (await _questionsRepository.GetAsync(predicate, getQuestionsParams.Skip, getQuestionsParams.Take))
                 .Select(question =>
@@ -112,7 +113,7 @@ namespace TestMaker.TestService.Infrastructure.Services
                 Data = questions.ToList(),
                 Page = getQuestionsParams.Page,
                 Take = getQuestionsParams.Take,
-                TotalPage = count
+                TotalRecord = count
             };
 
             return new ServiceResult<GetPaginationResult<QuestionForList>>(result);

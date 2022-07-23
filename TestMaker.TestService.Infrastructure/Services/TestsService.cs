@@ -304,7 +304,7 @@ namespace TestMaker.TestService.Infrastructure.Services
                 Data = result.ToList(),
                 Page = getTestParams.Page,
                 Take = getTestParams.Take,
-                TotalPage = await _testsRepository.CountAsync(predicate)
+                TotalRecord = await _testsRepository.CountAsync(predicate)
             });
         }
 
