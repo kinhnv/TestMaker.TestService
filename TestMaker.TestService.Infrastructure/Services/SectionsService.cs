@@ -92,7 +92,7 @@ namespace TestMaker.TestService.Infrastructure.Services
                 Data = sections.ToList(),
                 Page = getSectionsParams.Page,
                 Take = getSectionsParams.Take,
-                TotalPage = count
+                TotalRecord = count
             };
 
             return new ServiceResult<GetPaginationResult<SectionForList>>(result);
